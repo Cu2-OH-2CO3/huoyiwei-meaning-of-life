@@ -10,7 +10,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
 
 object ImageUtils {
 
@@ -20,7 +19,7 @@ object ImageUtils {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             saveImageToMediaStore(context, bitmap, subDir, fileName)
         } else {
-            saveImageToExternalStorage(bitmap, subDir, fileName)
+            saveImageToExternalStorage(context, bitmap, subDir, fileName)
         }
     }
 
@@ -44,9 +43,9 @@ object ImageUtils {
         return null
     }
 
-    private fun saveImageToExternalStorage(bitmap: Bitmap, subDir: String, fileName: String): String? {
-        val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        val appDir = File(picturesDir, "活意味/$subDir")
+    private fun saveImageToExternalStorage(context: Context, bitmap: Bitmap, subDir: String, fileName: String): String? {
+        // 使用应用私有目录，不需要权限
+        val appDir = File(context.getExternalFilesDir(null), subDir)
 
         if (!appDir.exists()) {
             appDir.mkdirs()
@@ -59,6 +58,7 @@ object ImageUtils {
             }
             file.absolutePath
         } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }
@@ -69,6 +69,7 @@ object ImageUtils {
                 BitmapFactory.decodeStream(inputStream)
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }

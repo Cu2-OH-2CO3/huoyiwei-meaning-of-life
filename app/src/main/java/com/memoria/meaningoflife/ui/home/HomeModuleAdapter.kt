@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.memoria.meaningoflife.databinding.ItemHomeModuleBinding
+import com.memoria.meaningoflife.utils.CardColorManager
 
 class HomeModuleAdapter(
     private val onModuleClick: (HomeModule) -> Unit,
@@ -39,11 +40,16 @@ class HomeModuleAdapter(
             binding.tvTitle.text = module.title
             binding.tvStats.text = module.statsText
             binding.ivIcon.setImageResource(module.iconRes)
-            // 设置卡片背景颜色 - 使用 setCardBackgroundColor 而不是 setBackgroundColor
-            val cardView = binding.root as? androidx.cardview.widget.CardView
-            cardView?.setCardBackgroundColor(module.color)
 
-            // 删除按钮显示
+            // 根据模块ID应用不同的卡片颜色
+            val color = when (module.id) {
+                "painting" -> CardColorManager.getPaintingCardColor(binding.root.context)
+                "diary" -> CardColorManager.getDiaryCardColor(binding.root.context)
+                "lunch" -> CardColorManager.getLunchCardColor(binding.root.context)
+                else -> CardColorManager.getBackupCardColor(binding.root.context)
+            }
+            binding.cardView.setCardBackgroundColor(color)
+
             binding.btnDelete.visibility = if (isEditMode) View.VISIBLE else View.GONE
 
             binding.root.setOnClickListener {

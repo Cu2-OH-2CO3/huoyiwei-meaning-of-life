@@ -2,6 +2,7 @@ package com.memoria.meaningoflife.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.databinding.FragmentSettingsBinding
 import com.memoria.meaningoflife.utils.DataExporter
 import com.memoria.meaningoflife.utils.FileUtils
+import com.memoria.meaningoflife.utils.LogManager
 import com.memoria.meaningoflife.utils.QuoteManager
 import kotlinx.coroutines.launch
 
@@ -29,6 +31,10 @@ class SettingsFragment : Fragment() {
     private lateinit var quoteAdapter: QuoteListAdapter
     private var previousThemePosition = 0
     private var previousDarkModeState = false
+
+    companion object {
+        private const val TAG = "SettingsFragment"
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
@@ -48,6 +54,8 @@ class SettingsFragment : Fragment() {
         // 保存初始状态
         previousThemePosition = viewModel.getThemePreference()
         previousDarkModeState = viewModel.isDarkModeEnabled()
+
+        Log.d(TAG, "onViewCreated: themePosition=$previousThemePosition, darkMode=$previousDarkModeState")
 
         setupClickListeners()
         setupQuoteRecyclerView()
@@ -81,15 +89,17 @@ class SettingsFragment : Fragment() {
     private fun loadQuotes() {
         val quotes = quoteManager.getQuotes()
         quoteAdapter.submitList(quotes)
+        Log.d(TAG, "loadQuotes: loaded ${quotes.size} quotes")
     }
 
     private fun setupClickListeners() {
+        // 数据管理
         binding.btnBackup.setOnClickListener { exportData() }
+        binding.btnRestore.setOnClickListener { restoreData() }
         binding.btnStorage.setOnClickListener { showStoragePath() }
         binding.btnClearCache.setOnClickListener { clearCache() }
-        binding.btnAddQuote.setOnClickListener { showAddQuoteDialog() }
 
-        // 深色模式开关 - 立即生效，无弹窗
+        // 界面外观
         binding.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked != previousDarkModeState) {
                 previousDarkModeState = isChecked
@@ -97,7 +107,6 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        // 主题选择器 - 需要重启，保留弹窗
         binding.spinnerTheme.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position != previousThemePosition) {
@@ -108,11 +117,27 @@ class SettingsFragment : Fragment() {
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
         }
 
+        // 首页背景设置
+        binding.btnBackgroundPreview.setOnClickListener {
+            Log.d(TAG, "Background preview button clicked")
+            startActivity(Intent(requireContext(), BackgroundPreviewActivity::class.java))
+        }
+
+        // 每日一言
+        binding.btnAddQuote.setOnClickListener { showAddQuoteDialog() }
+
+        // 关于
+        binding.btnLogViewer.setOnClickListener {
+            Log.d(TAG, "Log viewer button clicked")
+            startActivity(Intent(requireContext(), LogViewerActivity::class.java))
+        }
         binding.btnPrivacy.setOnClickListener { showPrivacyPolicy() }
         binding.btnIntro.setOnClickListener { showIntro() }
     }
 
     private fun toggleDarkMode(isDarkMode: Boolean) {
+        Log.d(TAG, "toggleDarkMode: isDarkMode=$isDarkMode")
+
         // 保存设置
         viewModel.saveDarkModePreference(isDarkMode)
 
@@ -130,6 +155,8 @@ class SettingsFragment : Fragment() {
     }
 
     private fun applyThemeAndRestart(position: Int) {
+        Log.d(TAG, "applyThemeAndRestart: position=$position")
+
         // 保存设置
         viewModel.saveThemePreference(position)
 
@@ -150,6 +177,8 @@ class SettingsFragment : Fragment() {
     }
 
     private fun restartApp() {
+        Log.d(TAG, "restartApp: Restarting app")
+
         // 创建重启 Intent
         val intent = Intent(requireContext(), com.memoria.meaningoflife.ui.MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -215,30 +244,62 @@ class SettingsFragment : Fragment() {
         val themePosition = viewModel.getThemePreference()
         binding.spinnerTheme.setSelection(themePosition)
         previousThemePosition = themePosition
+
+        Log.d(TAG, "loadData: themePosition=$themePosition, darkMode=$isDarkMode")
     }
 
     private fun exportData() {
+        Log.d(TAG, "exportData: Starting export")
         lifecycleScope.launch {
             DataExporter.exportAllData(requireContext())
+        }
+    }
+
+    private fun restoreData() {
+        Log.d(TAG, "restoreData: Starting restore")
+        // 打开文件选择器
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "application/json"
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(intent, 1001)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1001 && resultCode == android.app.Activity.RESULT_OK) {
+            data?.data?.let { uri ->
+                lifecycleScope.launch {
+                    val success = DataExporter.importData(requireContext(), uri)
+                    if (success) {
+                        Toast.makeText(requireContext(), "恢复成功，请重启应用", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(requireContext(), "恢复失败", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 
     private fun showStoragePath() {
         val path = FileUtils.getAppStorageDir(requireContext()).absolutePath
         Toast.makeText(requireContext(), "存储路径: $path", Toast.LENGTH_LONG).show()
+        Log.d(TAG, "showStoragePath: path=$path")
     }
 
     private fun clearCache() {
+        Log.d(TAG, "clearCache: Clearing cache")
         lifecycleScope.launch {
             DataExporter.clearCache(requireContext())
         }
     }
 
     private fun showPrivacyPolicy() {
+        Log.d(TAG, "showPrivacyPolicy: Opening privacy policy")
         startActivity(Intent(requireContext(), PrivacyPolicyActivity::class.java))
     }
 
     private fun showIntro() {
+        Log.d(TAG, "showIntro: Opening intro")
         startActivity(Intent(requireContext(), IntroActivity::class.java))
     }
 

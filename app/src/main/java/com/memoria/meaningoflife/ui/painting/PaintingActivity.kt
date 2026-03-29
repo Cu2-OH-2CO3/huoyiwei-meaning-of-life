@@ -3,14 +3,12 @@ package com.memoria.meaningoflife.ui.painting
 import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.databinding.ActivityPaintingBinding
 import com.memoria.meaningoflife.ui.BaseActivity
+import com.memoria.meaningoflife.utils.LogManager
 
 class PaintingActivity : BaseActivity() {
 
@@ -20,6 +18,7 @@ class PaintingActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LogManager.i("MainActivity", "MainActivity onCreate")
         binding = ActivityPaintingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -31,11 +30,12 @@ class PaintingActivity : BaseActivity() {
         val primaryColor = typedValue.data
         supportActionBar?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(primaryColor))
 
+        // 设置 FAB 按钮颜色为主题色
         binding.fabAdd.setBackgroundTintList(android.content.res.ColorStateList.valueOf(primaryColor))
+
+        // 只保留目标管理按钮，移除统计按钮
         binding.btnGoalManage.setTextColor(primaryColor)
         binding.btnGoalManage.setBackgroundResource(R.drawable.button_outline_primary)
-        binding.btnStatistics.setTextColor(primaryColor)
-        binding.btnStatistics.setBackgroundResource(R.drawable.button_outline_primary)
 
         setupViewModel()
         setupRecyclerView()
@@ -68,10 +68,6 @@ class PaintingActivity : BaseActivity() {
         binding.btnGoalManage.setOnClickListener {
             startActivity(Intent(this, GoalManageActivity::class.java))
         }
-
-        binding.btnStatistics.setOnClickListener {
-            Toast.makeText(this, "统计功能开发中", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun observeData() {
@@ -97,14 +93,7 @@ class PaintingActivity : BaseActivity() {
             }
         }
 
-        viewModel.currentGoal.observe(this) { goal ->
-            if (goal != null) {
-                binding.tvGoalProgress.visibility = android.view.View.VISIBLE
-                binding.tvGoalProgress.text = "当前目标: ${goal.title} - 进度 ${goal.currentValue}/${goal.targetValue}"
-            } else {
-                binding.tvGoalProgress.visibility = android.view.View.GONE
-            }
-        }
+        // 移除当前目标显示
     }
 
     override fun onSupportNavigateUp(): Boolean {

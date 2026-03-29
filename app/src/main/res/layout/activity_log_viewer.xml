@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <!-- 顶部工具栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/surface"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvLogInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="日志大小: 0KB"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary" />
+
+        <ImageButton
+            android:id="@+id/btnRefresh"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_refresh"
+            android:background="?selectableItemBackgroundBorderless"
+            app:tint="@color/icon_tint"
+            android:contentDescription="刷新" />
+
+        <ImageButton
+            android:id="@+id/btnCopy"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_copy"
+            android:background="?selectableItemBackgroundBorderless"
+            app:tint="@color/icon_tint"
+            android:contentDescription="复制" />
+
+        <ImageButton
+            android:id="@+id/btnExport"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_export"
+            android:background="?selectableItemBackgroundBorderless"
+            app:tint="@color/icon_tint"
+            android:contentDescription="导出" />
+
+        <ImageButton
+            android:id="@+id/btnClear"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_delete"
+            android:background="?selectableItemBackgroundBorderless"
+            app:tint="@color/icon_tint"
+            android:contentDescription="清除" />
+
+    </LinearLayout>
+
+    <!-- 日志内容 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvLogContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:textColor="@color/text_primary"
+            android:fontFamily="monospace"
+            android:lineSpacingExtra="2dp" />
+
+    </ScrollView>
+
+</LinearLayout>

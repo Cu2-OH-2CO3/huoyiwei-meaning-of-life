@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.databinding.ActivityMainBinding
+import com.memoria.meaningoflife.utils.LogManager
 
 class MainActivity : BaseActivity() {
 
@@ -17,6 +18,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LogManager.i("MainActivity", "MainActivity onCreate")
 
         prefs = getSharedPreferences("settings", MODE_PRIVATE)
 

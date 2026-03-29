@@ -49,6 +49,21 @@
                     android:background="@color/divider" />
 
                 <TextView
+                    android:id="@+id/btnRestore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="📂 恢复数据"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:background="?selectableItemBackground" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <TextView
                     android:id="@+id/btnStorage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -77,11 +92,11 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- 偏好设置 -->
+        <!-- 界面外观 -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="偏好设置"
+            android:text="界面外观"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="8dp" />
@@ -99,6 +114,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!-- 深色模式开关 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -126,6 +142,7 @@
                     android:layout_height="1dp"
                     android:background="@color/divider" />
 
+                <!-- 主题颜色选择 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -148,6 +165,22 @@
                         android:minWidth="100dp" />
 
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <!-- 首页背景设置 -->
+                <TextView
+                    android:id="@+id/btnBackgroundPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="🖼️ 首页背景"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:background="?selectableItemBackground" />
 
             </LinearLayout>
 
@@ -174,7 +207,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-`
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/quoteRecyclerView"
                     android:layout_width="match_parent"
@@ -247,6 +280,21 @@
                         android:textColor="@color/text_secondary" />
 
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <TextView
+                    android:id="@+id/btnLogViewer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="📋 查看日志"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:background="?selectableItemBackground" />
 
                 <View
                     android:layout_width="match_parent"

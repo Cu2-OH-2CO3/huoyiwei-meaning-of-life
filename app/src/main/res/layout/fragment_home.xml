@@ -39,7 +39,6 @@
 
         </LinearLayout>
 
-        <!-- 使用主题色 -->
         <ImageButton
             android:id="@+id/btnEditMode"
             android:layout_width="40dp"

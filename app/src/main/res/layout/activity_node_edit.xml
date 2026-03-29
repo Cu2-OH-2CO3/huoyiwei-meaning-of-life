@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:hint="时长（分钟）"
             android:layout_marginBottom="8dp"
-            app:boxBackgroundMode="filled">
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDuration"
@@ -86,10 +86,27 @@
             android:layout_height="wrap_content"
             android:hint="节点留言（可选）"
             android:layout_marginBottom="16dp"
-            app:boxBackgroundMode="filled">
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 灵感记录 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="灵感记录（可选）"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etInspiration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
@@ -122,6 +139,36 @@
             android:text="选择图片"
             style="@style/Widget.MeaningOfLife.Button.Outlined"
             android:layout_marginBottom="24dp" />
+
+        <!-- 参考图（可选） -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="参考图"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvReferenceHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已有参考图"
+            android:textSize="12sp"
+            android:textColor="@color/primary"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/ivReference"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:background="@color/divider"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnSave"

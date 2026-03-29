@@ -12,8 +12,8 @@ android {
         applicationId = "com.memoria.meaningoflife"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -27,9 +27,9 @@ android {
         create("release") {
             // 使用环境变量或直接填写（注意：不要提交到版本控制）
             storeFile = file(System.getenv("KEYSTORE_PATH") ?: "D:\\code\\HYW\\huoyiwei.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "huoyiwei"
-            keyAlias = System.getenv("KEY_ALIAS") ?: "huoyiwei"
-            keyPassword = System.getenv("KEY_PASSWORD") ?: "huoyiwei"
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("KEY_ALIAS") ?: ""
+            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 

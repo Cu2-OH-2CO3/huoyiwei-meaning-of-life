@@ -15,7 +15,6 @@ class PaintingViewModel : ViewModel() {
 
     private val repository = PaintingRepository(MeaningOfLifeApp.instance.database)
 
-    // 将 Flow 转换为 LiveData
     val allWorks: LiveData<List<WorkEntity>> = repository.getAllWorks().asLiveData()
 
     private val _totalDuration = MutableLiveData<Int>()
@@ -27,6 +26,16 @@ class PaintingViewModel : ViewModel() {
     init {
         loadTotalDuration()
         loadCurrentGoal()
+        // 监听作品变化，自动更新目标进度
+        observeWorksForGoalUpdate()
+    }
+
+    private fun observeWorksForGoalUpdate() {
+        viewModelScope.launch {
+            allWorks.observeForever { works ->
+                updateGoalProgress()
+            }
+        }
     }
 
     private fun loadTotalDuration() {
@@ -45,10 +54,44 @@ class PaintingViewModel : ViewModel() {
         }
     }
 
+    private fun updateGoalProgress() {
+        viewModelScope.launch {
+            val currentGoal = repository.getCurrentGoal()
+            if (currentGoal != null && currentGoal.status == 0) {
+                // 获取当前进度 - 统计从开始日期到目标日期之间的作品
+                val currentValue = when (currentGoal.targetType) {
+                    0 -> {
+                        // 作品数量目标
+                        repository.getWorkCountByDateRange(currentGoal.startDate, currentGoal.targetDate)
+                    }
+                    else -> {
+                        // 时长目标
+                        repository.getTotalDurationByDateRange(currentGoal.startDate, currentGoal.targetDate)
+                    }
+                }
+
+                // 如果进度有变化，更新数据库
+                if (currentValue != currentGoal.currentValue) {
+                    repository.updateGoalProgress(currentGoal.id, currentValue)
+                    // 重新加载目标以更新UI
+                    loadCurrentGoal()
+                }
+                // 注意：不再自动完成，由用户手动点击"完成"按钮
+            }
+        }
+    }
+
     fun deleteWork(work: WorkEntity) {
         viewModelScope.launch {
             repository.deleteWork(work.id)
             loadTotalDuration()
+            updateGoalProgress()
         }
+    }
+
+    fun refreshData() {
+        loadTotalDuration()
+        loadCurrentGoal()
+        updateGoalProgress()
     }
 }

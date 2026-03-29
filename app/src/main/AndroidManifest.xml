@@ -46,6 +46,8 @@
             android:name=".ui.painting.WorkDetailActivity"
             android:parentActivityName=".ui.painting.PaintingActivity" />
 
+
+
         <activity
             android:name=".ui.painting.AddWorkActivity"
             android:parentActivityName=".ui.painting.PaintingActivity" />
@@ -89,6 +91,16 @@
         <activity
             android:name=".ui.settings.PrivacyPolicyActivity"
             android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.settings.LogViewerActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.settings.BackgroundPreviewActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
+
 
     </application>
 

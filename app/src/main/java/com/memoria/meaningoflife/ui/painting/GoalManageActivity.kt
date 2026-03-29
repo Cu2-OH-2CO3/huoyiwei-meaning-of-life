@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.TypedValue
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.memoria.meaningoflife.R
@@ -44,10 +45,16 @@ class GoalManageActivity : BaseActivity() {
         loadGoals()
     }
 
-
     private fun setupRecyclerView() {
         adapter = GoalListAdapter(
-            onGoalClick = { },
+            onGoalClick = { goal ->
+                // 点击目标，可以显示详情或编辑
+                showEditGoalDialog(goal)
+            },
+            onGoalEdit = { goal ->
+                // 编辑目标
+                showEditGoalDialog(goal)
+            },
             onGoalComplete = { goal ->
                 lifecycleScope.launch {
                     repository.completeGoal(goal.id)
@@ -56,10 +63,18 @@ class GoalManageActivity : BaseActivity() {
                 }
             },
             onGoalDelete = { goal ->
-                lifecycleScope.launch {
-                    repository.deleteGoal(goal)
-                    loadGoals()
-                }
+                AlertDialog.Builder(this)
+                    .setTitle("删除目标")
+                    .setMessage("确定要删除「${goal.title}」吗？")
+                    .setPositiveButton("删除") { _, _ ->
+                        lifecycleScope.launch {
+                            repository.deleteGoal(goal)
+                            loadGoals()
+                            Toast.makeText(this@GoalManageActivity, "目标已删除", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .setNegativeButton("取消", null)
+                    .show()
             }
         )
 
@@ -116,7 +131,7 @@ class GoalManageActivity : BaseActivity() {
             }
         }
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle("添加目标")
             .setView(dialogBinding)
             .setPositiveButton("保存") { _, _ ->
@@ -159,6 +174,91 @@ class GoalManageActivity : BaseActivity() {
                     repository.insertGoal(goal)
                     loadGoals()
                     Toast.makeText(this@GoalManageActivity, "目标已添加", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private fun showEditGoalDialog(goal: GoalEntity) {
+        val dialogBinding = android.view.LayoutInflater.from(this)
+            .inflate(com.memoria.meaningoflife.R.layout.dialog_edit_goal, null)
+
+        val etTitle = dialogBinding.findViewById<android.widget.EditText>(R.id.etTitle)
+        val etDescription = dialogBinding.findViewById<android.widget.EditText>(R.id.etDescription)
+        val etTargetValue = dialogBinding.findViewById<android.widget.EditText>(R.id.etTargetValue)
+        val rgType = dialogBinding.findViewById<android.widget.RadioGroup>(R.id.rgType)
+        val btnStartDate = dialogBinding.findViewById<android.widget.Button>(R.id.btnStartDate)
+        val btnTargetDate = dialogBinding.findViewById<android.widget.Button>(R.id.btnTargetDate)
+
+        // 预填数据
+        etTitle.setText(goal.title)
+        etDescription.setText(goal.description)
+        etTargetValue.setText(goal.targetValue.toString())
+
+        // 设置目标类型
+        if (goal.targetType == 0) {
+            rgType.check(R.id.rbWorkCount)
+        } else {
+            rgType.check(R.id.rbDuration)
+        }
+
+        var startDate = goal.startDate
+        var targetDate = goal.targetDate
+
+        btnStartDate.text = "开始日期: ${startDate}"
+        btnStartDate.setOnClickListener {
+            showDatePicker { date ->
+                startDate = date
+                btnStartDate.text = "开始日期: $date"
+            }
+        }
+
+        btnTargetDate.text = "目标日期: ${targetDate}"
+        btnTargetDate.setOnClickListener {
+            showDatePicker { date ->
+                targetDate = date
+                btnTargetDate.text = "目标日期: $date"
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("编辑目标")
+            .setView(dialogBinding)
+            .setPositiveButton("保存") { _, _ ->
+                val title = etTitle.text.toString().trim()
+                val description = etDescription.text.toString().trim()
+                val targetValueStr = etTargetValue.text.toString().trim()
+                val targetType = if (rgType.checkedRadioButtonId == R.id.rbWorkCount) 0 else 1
+
+                if (title.isEmpty()) {
+                    Toast.makeText(this, "请输入目标名称", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                if (targetValueStr.isEmpty()) {
+                    Toast.makeText(this, "请输入目标值", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val targetValue = targetValueStr.toIntOrNull()
+                if (targetValue == null) {
+                    Toast.makeText(this, "请输入有效的数字", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val updatedGoal = goal.copy(
+                    title = title,
+                    description = description,
+                    targetDate = targetDate,
+                    startDate = startDate,
+                    targetType = targetType,
+                    targetValue = targetValue
+                )
+
+                lifecycleScope.launch {
+                    repository.updateGoal(updatedGoal)
+                    loadGoals()
+                    Toast.makeText(this@GoalManageActivity, "目标已更新", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("取消", null)

@@ -12,13 +12,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/fabAdd">
 
-        <!-- 统计栏 -->
+        <!-- 统计栏 - 只保留总时长和目标管理按钮 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp"
-            android:background="@color/surface">
+            android:background="@color/surface"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tvTotalDuration"
@@ -29,16 +30,6 @@
                 android:textSize="14sp"
                 android:textColor="@color/text_primary" />
 
-            <TextView
-                android:id="@+id/tvGoalProgress"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=""
-                android:textSize="12sp"
-                android:textColor="@color/accent"
-                android:visibility="gone" />
-
             <Button
                 android:id="@+id/btnGoalManage"
                 android:layout_width="wrap_content"
@@ -48,17 +39,6 @@
                 android:minWidth="60dp"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp" />
-
-            <Button
-                android:id="@+id/btnStatistics"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="统计"
-                style="@style/Widget.MeaningOfLife.Button.Outlined"
-                android:minWidth="60dp"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:layout_marginStart="8dp" />
 
         </LinearLayout>
 
@@ -90,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/primary"
+        app:backgroundTint="?attr/colorPrimary"
         app:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

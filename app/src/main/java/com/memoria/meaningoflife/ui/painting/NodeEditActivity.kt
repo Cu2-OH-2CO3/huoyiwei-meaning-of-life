@@ -104,12 +104,25 @@ class NodeEditActivity : BaseActivity() {
                         .into(binding.ivPreview)
                     binding.btnSelectImage.text = "更换图片"
                 }
+                // 参考图
+                if (!node.referenceImagePath.isNullOrEmpty()) {
+                    com.bumptech.glide.Glide
+                        .with(this@NodeEditActivity)
+                        .load(node.referenceImagePath)
+                        .into(binding.ivReference)
+                    binding.tvReferenceHint.visibility = android.view.View.VISIBLE
+                }
+                // 灵感记录
+                if (!node.inspiration.isNullOrEmpty()) {
+                    binding.etInspiration.setText(node.inspiration)
+                }
             }
         }
     }
 
     private fun saveNode() {
         val note = binding.etNote.text.toString().trim()
+        val inspiration = binding.etInspiration.text.toString().trim()
         val durationStr = binding.etDuration.text.toString().trim()
 
         if (durationStr.isEmpty()) {
@@ -123,6 +136,7 @@ class NodeEditActivity : BaseActivity() {
             return
         }
 
+        // 保存节点图片
         if (selectedImageUri != null) {
             val bitmap = ImageUtils.getBitmapFromUri(this, selectedImageUri!!)
             if (bitmap != null) {
@@ -166,7 +180,9 @@ class NodeEditActivity : BaseActivity() {
                 imagePath = savedImagePath,
                 duration = duration,
                 cumulativeDuration = cumulativeDuration,
-                note = note
+                note = note,
+                referenceImagePath = null,  // 可扩展
+                inspiration = inspiration.ifEmpty { null }
             )
 
             if (nodeId == 0L) {
@@ -175,6 +191,7 @@ class NodeEditActivity : BaseActivity() {
                 repository.updateNode(node)
             }
 
+            // 更新作品总时长
             val allNodes = repository.getNodesByWorkId(workId)
             val totalDuration = allNodes.sumOf { it.duration }
             work?.let {

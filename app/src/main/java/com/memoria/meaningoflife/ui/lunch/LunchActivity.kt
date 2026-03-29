@@ -14,6 +14,7 @@ import com.memoria.meaningoflife.databinding.ActivityLunchBinding
 import com.memoria.meaningoflife.data.repository.LunchRepository
 import com.memoria.meaningoflife.model.SpicyLevel
 import com.memoria.meaningoflife.ui.BaseActivity
+import com.memoria.meaningoflife.utils.LogManager
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -117,6 +118,7 @@ class LunchActivity : BaseActivity() {
     }
 
     private fun startLottery() {
+        LogManager.i("PaintingActivity", "PaintingActivity onCreate")
         if (isRolling) return
 
         if (activeDishes.isEmpty()) {

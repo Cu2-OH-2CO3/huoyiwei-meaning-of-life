@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="预设名称"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/etPresetName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="例如：我的主题"
+        android:maxLines="1"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="绘画记录卡片颜色"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etPaintingColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="#5D7A5C"
+        android:maxLines="1"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="日记本卡片颜色"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etDiaryColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="#9B8E7C"
+        android:maxLines="1"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="午餐抽选卡片颜色"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etLunchColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="#FF8C42"
+        android:maxLines="1"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="备用卡片颜色"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etBackupColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="#FF8C42"
+        android:maxLines="1" />
+
+</LinearLayout>

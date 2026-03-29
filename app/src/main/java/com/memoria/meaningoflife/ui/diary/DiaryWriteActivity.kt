@@ -22,6 +22,7 @@ import com.memoria.meaningoflife.ui.BaseActivity
 import com.memoria.meaningoflife.utils.DateUtils
 import com.memoria.meaningoflife.utils.ImageUtils
 import com.memoria.meaningoflife.utils.JsonHelper
+import com.memoria.meaningoflife.utils.LogManager
 import kotlinx.coroutines.launch
 
 class DiaryWriteActivity : BaseActivity() {
@@ -249,6 +250,7 @@ class DiaryWriteActivity : BaseActivity() {
     }
 
     private fun saveDiary() {
+        LogManager.i("PaintingActivity", "PaintingActivity onCreate")
         val title = binding.etTitle.text.toString().trim()
         val content = binding.etContent.text.toString().trim()
 
