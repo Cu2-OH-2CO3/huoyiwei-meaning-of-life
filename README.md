@@ -37,7 +37,7 @@
 ## 📱 下载
 
 ### 正式版
-- [GitHub Releases](https://github.com/你的用户名/huoyiwei/releases)
+- [GitHub Releases](https://github.com/Cu2-OH-2CO3/huoyiwei-meaning-of-life/releases)
 
 ## 🛠 技术栈
 
