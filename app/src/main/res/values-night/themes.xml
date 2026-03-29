@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 深色模式主题 -->
+    <style name="Theme.MeaningOfLife.Orange" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#FF8C42</item>
+        <item name="colorPrimaryVariant">#E67E22</item>
+        <item name="colorSecondary">#FF8C42</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+    </style>
+
+    <style name="Theme.MeaningOfLife.Green" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#4CAF50</item>
+        <item name="colorPrimaryVariant">#388E3C</item>
+        <item name="colorSecondary">#4CAF50</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+    </style>
+
+    <style name="Theme.MeaningOfLife.Blue" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#2196F3</item>
+        <item name="colorPrimaryVariant">#1976D2</item>
+        <item name="colorSecondary">#2196F3</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+    </style>
+
+    <style name="Theme.MeaningOfLife.Purple" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#9C27B0</item>
+        <item name="colorPrimaryVariant">#7B1FA2</item>
+        <item name="colorSecondary">#9C27B0</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+    </style>
+</resources>

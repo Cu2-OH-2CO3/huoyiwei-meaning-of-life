@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">活意味</string>
+    <string name="app_subtitle">记录创作，品味生活</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">首页</string>
+    <string name="nav_calendar">日历</string>
+    <string name="nav_settings">设置</string>
+
+    <!-- Home -->
+    <string name="home_painting">绘画记录</string>
+    <string name="home_diary">日记本</string>
+    <string name="home_lunch">午餐抽选</string>
+    <string name="home_enter">进入</string>
+    <string name="home_today_duration">今日练习</string>
+    <string name="home_month_work">本月作品</string>
+    <string name="home_current_goal">当前目标</string>
+    <string name="home_consecutive_days">连续写日记</string>
+    <string name="home_month_diary">本月日记</string>
+    <string name="home_today_mood">今日心情</string>
+    <string name="home_today_recommend">今日推荐</string>
+    <string name="home_total_dishes">菜单数量</string>
+
+    <!-- Painting -->
+    <string name="painting_title">绘画记录</string>
+    <string name="painting_add_work">添加作品</string>
+    <string name="painting_work_list">作品列表</string>
+    <string name="painting_goal_manage">目标管理</string>
+    <string name="painting_total_duration">总时长</string>
+    <string name="painting_nodes">节点</string>
+    <string name="painting_add_node">添加节点</string>
+    <string name="painting_node_duration">节点时长</string>
+    <string name="painting_node_note">节点留言</string>
+    <string name="painting_tag_sketch">草稿</string>
+    <string name="painting_tag_practice">练习</string>
+    <string name="painting_tag_finished">成图</string>
+
+    <!-- Diary -->
+    <string name="diary_title">日记本</string>
+    <string name="diary_write">写日记</string>
+    <string name="diary_calendar">日历</string>
+    <string name="diary_mood">心情</string>
+    <string name="diary_weather">天气</string>
+    <string name="diary_tags">标签</string>
+    <string name="diary_add_image">添加图片</string>
+    <string name="diary_save">保存</string>
+
+    <!-- Lunch -->
+    <string name="lunch_title">午餐抽选</string>
+    <string name="lunch_start">开始抽选</string>
+    <string name="lunch_edit_menu">编辑菜单</string>
+    <string name="lunch_history">历史记录</string>
+    <string name="lunch_dish_name">菜名</string>
+    <string name="lunch_cuisine">菜系</string>
+    <string name="lunch_spicy">辣度</string>
+    <string name="lunch_no_spicy">不辣</string>
+    <string name="lunch_mild_spicy">微辣</string>
+    <string name="lunch_medium_spicy">中辣</string>
+    <string name="lunch_hot_spicy">特辣</string>
+
+    <!-- Settings -->
+    <string name="settings_title">设置</string>
+    <string name="settings_data_manage">数据管理</string>
+    <string name="settings_backup">备份数据</string>
+    <string name="settings_storage">存储位置</string>
+    <string name="settings_clear_cache">清除缓存</string>
+    <string name="settings_preferences">偏好设置</string>
+    <string name="settings_dark_mode">深色模式</string>
+    <string name="settings_daily_reminder">每日签到提醒</string>
+    <string name="settings_lunch_reminder_time">午餐推荐时间</string>
+    <string name="settings_about">关于</string>
+    <string name="settings_version">版本号</string>
+    <string name="settings_privacy">隐私政策</string>
+    <string name="settings_intro">功能介绍</string>
+
+    <!-- Common -->
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
+    <string name="save">保存</string>
+    <string name="back">返回</string>
+    <string name="loading">加载中...</string>
+    <string name="empty_data">暂无数据</string>
+    <string name="error">出错了</string>
+    <string name="success">成功</string>
+</resources>

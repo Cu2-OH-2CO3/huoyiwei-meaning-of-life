@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false" />
+
+    <application
+        android:name=".MeaningOfLifeApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MeaningOfLife.Orange"
+        tools:targetApi="31">
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MeaningOfLife.Orange">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 添加 IntroActivity -->
+        <activity
+            android:name=".ui.settings.IntroActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.painting.PaintingActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.painting.WorkDetailActivity"
+            android:parentActivityName=".ui.painting.PaintingActivity" />
+
+        <activity
+            android:name=".ui.painting.AddWorkActivity"
+            android:parentActivityName=".ui.painting.PaintingActivity" />
+
+        <activity
+            android:name=".ui.painting.NodeEditActivity"
+            android:parentActivityName=".ui.painting.WorkDetailActivity" />
+
+        <activity
+            android:name=".ui.painting.GoalManageActivity"
+            android:parentActivityName=".ui.painting.PaintingActivity" />
+
+        <activity
+            android:name=".ui.diary.DiaryActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.diary.DiaryWriteActivity"
+            android:parentActivityName=".ui.diary.DiaryActivity" />
+
+        <activity
+            android:name=".ui.diary.DiaryDetailActivity"
+            android:parentActivityName=".ui.diary.DiaryActivity" />
+
+        <activity
+            android:name=".ui.diary.DiaryStatisticsActivity"
+            android:parentActivityName=".ui.diary.DiaryActivity" />
+
+        <activity
+            android:name=".ui.lunch.LunchActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.lunch.DishManageActivity"
+            android:parentActivityName=".ui.lunch.LunchActivity" />
+
+        <activity
+            android:name=".ui.lunch.AddDishActivity"
+            android:parentActivityName=".ui.lunch.DishManageActivity" />
+
+        <activity
+            android:name=".ui.settings.PrivacyPolicyActivity"
+            android:parentActivityName=".ui.MainActivity" />
+
+    </application>
+
+</manifest>

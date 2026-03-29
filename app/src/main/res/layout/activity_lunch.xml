@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:padding="16dp">
+
+    <!-- 抽选结果卡片 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/card_background">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp">
+
+            <TextView
+                android:id="@+id/tvResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="点击开始抽选"
+                android:textSize="28sp"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/tvDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- 抽选按钮 - 使用 FrameLayout 包裹，完全控制背景 -->
+    <FrameLayout
+        android:id="@+id/flLotteryButton"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="24dp">
+
+        <Button
+            android:id="@+id/btnLottery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/lunch_start"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:background="@null" />
+
+    </FrameLayout>
+
+    <!-- 功能按钮行 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/flEditMenu"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp">
+
+            <Button
+                android:id="@+id/btnEditMenu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/lunch_edit_menu"
+                android:textSize="14sp"
+                android:background="@null" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/flHistory"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp">
+
+            <Button
+                android:id="@+id/btnHistory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/lunch_history"
+                android:textSize="14sp"
+                android:background="@null" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

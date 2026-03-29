@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主题色 -->
+    <color name="primary">#FF8C42</color>
+    <color name="primary_light">#FFB46E</color>
+    <color name="primary_dark">#E67E22</color>
+
+    <!-- 辅助色 -->
+    <color name="accent">#8A9B68</color>
+    <color name="accent_dark">#6B7A4E</color>
+
+    <!-- 模块色 -->
+    <color name="painting_color">#5D7A5C</color>
+    <color name="diary_color">#9B8E7C</color>
+    <color name="lunch_color">#FF8C42</color>
+
+    <!-- 日历完成标记色 -->
+    <color name="calendar_painting">#4CAF50</color>
+    <color name="calendar_diary">#2196F3</color>
+
+    <!-- 卡片背景色 - 深色模式 -->
+    <color name="painting_card_background">#2C2C2C</color>
+    <color name="diary_card_background">#2A241E</color>
+    <color name="lunch_card_background">#2C2C2C</color>
+
+    <!-- 基础色 - 深色模式 -->
+    <color name="background">#121212</color>
+    <color name="surface">#1E1E1E</color>
+    <color name="card_background">@color/painting_card_background</color>
+    <color name="text_primary">#E0E0E0</color>
+    <color name="text_secondary">#E0E0E0</color>
+    <color name="divider">#333333</color>
+    <color name="background_dark">#121212</color>
+
+    <!-- 图标颜色 - 深色模式白色 -->
+    <color name="icon_tint">#FFFFFFFF</color>
+
+    <!-- 辣度色 -->
+    <color name="spicy_none">#4CAF50</color>
+    <color name="spicy_mild">#FFC107</color>
+    <color name="spicy_medium">#FF9800</color>
+    <color name="spicy_hot">#F44336</color>
+</resources>

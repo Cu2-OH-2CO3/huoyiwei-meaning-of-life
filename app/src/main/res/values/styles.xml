@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 基础主题 -->
+    <style name="Theme.MeaningOfLife" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/primary</item>
+        <item name="colorSecondaryVariant">@color/primary_dark</item>
+        <item name="colorOnSecondary">@android:color/white</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="materialButtonStyle">@style/Widget.MeaningOfLife.Button</item>
+        <item name="android:fontFamily">@font/lxgw</item>
+        <item name="fontFamily">@font/lxgw</item>
+    </style>
+
+    <!-- 橙色主题 -->
+    <style name="Theme.MeaningOfLife.Orange" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#FF8C42</item>
+        <item name="colorPrimaryVariant">#E67E22</item>
+    </style>
+
+    <!-- 绿色主题 -->
+    <style name="Theme.MeaningOfLife.Green" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#4CAF50</item>
+        <item name="colorPrimaryVariant">#388E3C</item>
+    </style>
+
+    <!-- 蓝色主题 -->
+    <style name="Theme.MeaningOfLife.Blue" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#2196F3</item>
+        <item name="colorPrimaryVariant">#1976D2</item>
+    </style>
+
+    <!-- 紫色主题 -->
+    <style name="Theme.MeaningOfLife.Purple" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#9C27B0</item>
+        <item name="colorPrimaryVariant">#7B1FA2</item>
+    </style>
+
+    <!-- 按钮样式 -->
+    <style name="Widget.MeaningOfLife.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:fontFamily">@font/lxgw</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="Widget.MeaningOfLife.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="tint">@android:color/white</item>
+    </style>
+
+    <style name="Widget.MeaningOfLife.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:fontFamily">@font/lxgw</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+</resources>
