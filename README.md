@@ -37,7 +37,7 @@
 ## 📱 下载
 
 ### 正式版
-- [GitHub Releases](https://github.com/你的用户名/huoyiwei/releases)
+- [GitHub Releases](https://github.com/Cu2-OH-2CO3/huoyiwei-meaning-of-life/releases)
 
 ## 🛠 技术栈
 
@@ -74,4 +74,5 @@ app/src/main/java/com/memoria/meaningoflife/
 - Android Studio Hedgehog | 2023.1.1 或更高版本
 - JDK 11 或更高版本
 - Gradle 8.0+
+
 
