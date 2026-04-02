@@ -11,6 +11,11 @@ class CheckinRepository(private val database: AppDatabase) {
     suspend fun getTodayCheckin(): CheckinEntity? = withContext(Dispatchers.IO) {
         database.checkinDao().getCheckinByDate(DateUtils.getCurrentDate())
     }
+    // 在 CheckinRepository 中添加
+    suspend fun getAllCheckinsSync(): List<CheckinEntity> = withContext(Dispatchers.IO) {
+        database.checkinDao().getAllCheckinsSync()
+    }
+
 
     suspend fun checkin(note: String? = null): Boolean = withContext(Dispatchers.IO) {
         val today = DateUtils.getCurrentDate()

@@ -1,12 +1,10 @@
 package com.memoria.meaningoflife.utils
 
 import android.content.Context
-import android.net.Uri
+import android.os.Environment
 import android.util.Log
-import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import com.memoria.meaningoflife.data.database.AppDatabase
 import com.memoria.meaningoflife.data.database.checkin.CheckinEntity
 import com.memoria.meaningoflife.data.database.diary.DiaryEntity
@@ -15,33 +13,33 @@ import com.memoria.meaningoflife.data.database.lunch.LotteryHistoryEntity
 import com.memoria.meaningoflife.data.database.painting.GoalEntity
 import com.memoria.meaningoflife.data.database.painting.NodeEntity
 import com.memoria.meaningoflife.data.database.painting.WorkEntity
+import com.memoria.meaningoflife.data.database.task.TaskEntity
+import com.memoria.meaningoflife.data.database.task.TaskNodeEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
-import java.io.FileWriter
 import java.text.SimpleDateFormat
-import com.bumptech.glide.Glide
 import java.util.*
 
 object DataExporter {
 
-    private const val TAG = "DataExporter"
-    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+    private val gson = GsonBuilder().setPrettyPrinting().create()
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
-    /**
-     * 导出数据类
-     */
-    data class ExportData(
-        val exportTime: String,
-        val version: String = "1.0",
-        val paintings: List<WorkEntity>,
-        val nodes: List<NodeEntity>,
-        val goals: List<GoalEntity>,
-        val diaries: List<DiaryEntity>,
-        val dishes: List<DishEntity>,
-        val lotteryHistory: List<LotteryHistoryEntity>,
-        val checkins: List<CheckinEntity>
+    data class BackupData(
+        val version: Int = 1,
+        val exportTime: String = dateFormat.format(Date()),
+        val works: List<WorkEntity> = emptyList(),
+        val nodes: List<NodeEntity> = emptyList(),
+        val goals: List<GoalEntity> = emptyList(),
+        val diaries: List<DiaryEntity> = emptyList(),
+        val dishes: List<DishEntity> = emptyList(),
+        val lotteryHistory: List<LotteryHistoryEntity> = emptyList(),
+        val checkins: List<CheckinEntity> = emptyList(),
+        val tasks: List<TaskEntity> = emptyList(),
+        val taskNodes: List<TaskNodeEntity> = emptyList()
     )
 
     /**
@@ -49,63 +47,36 @@ object DataExporter {
      */
     suspend fun exportAllData(context: Context): File? = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "exportAllData: Starting export")
-
             val database = AppDatabase.getInstance(context)
 
-            // 获取所有数据
-            val paintings = database.workDao().getAllWorksSync()
-            val nodes = database.nodeDao().getNodesByWorkId(0L) // 获取所有节点需要遍历作品
-            val allNodes = mutableListOf<NodeEntity>()
-            paintings.forEach { work ->
-                allNodes.addAll(database.nodeDao().getNodesByWorkId(work.id))
-            }
-
-            val goals = database.goalDao().getAllGoals()
-            val diaries = database.diaryDao().getAllDiariesSync()
-            val dishes = database.dishDao().getAllDishesSync()
-            val lotteryHistory = database.lotteryHistoryDao().getRecentHistory()
-            val checkins = database.checkinDao().getAllCheckinsSync()
-
-            Log.d(TAG, "exportAllData: paintings=${paintings.size}, nodes=${allNodes.size}, goals=${goals.size}, " +
-                    "diaries=${diaries.size}, dishes=${dishes.size}, history=${lotteryHistory.size}, checkins=${checkins.size}")
-
-            val exportData = ExportData(
-                exportTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date()),
-                version = "1.0",
-                paintings = paintings,
-                nodes = allNodes,
-                goals = goals,
-                diaries = diaries,
-                dishes = dishes,
-                lotteryHistory = lotteryHistory,
-                checkins = checkins
+            val backupData = BackupData(
+                works = database.workDao().getAllWorksSync(),
+                nodes = database.nodeDao().getAllNodesSync(),
+                goals = database.goalDao().getAllGoalsSync(),
+                diaries = database.diaryDao().getAllDiariesSync(),
+                dishes = database.dishDao().getAllDishesSync(),
+                lotteryHistory = database.lotteryHistoryDao().getAllHistorySync(),
+                checkins = database.checkinDao().getAllCheckinsSync(),
+                tasks = database.taskDao().getAllTasksSync(),
+                taskNodes = database.taskNodeDao().getAllTaskNodesSync()
             )
 
-            val json = gson.toJson(exportData)
-            val exportDir = FileUtils.getExportDir(context)
-
-            // 创建带时间戳的文件名
-            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val fileName = "huoyiwei_export_$timestamp.json"
-            val jsonFile = File(exportDir, fileName)
-
-            FileWriter(jsonFile).use { writer ->
-                writer.write(json)
+            val json = gson.toJson(backupData)
+            val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val backupDir = File(downloadDir, "HuoyiweiBackups")
+            if (!backupDir.exists()) {
+                backupDir.mkdirs()
             }
 
-            Log.d(TAG, "exportAllData: Success, file=${jsonFile.absolutePath}, size=${jsonFile.length()} bytes")
-
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "导出成功: $fileName\n路径: ${exportDir.absolutePath}", Toast.LENGTH_LONG).show()
+            val fileName = "backup_${System.currentTimeMillis()}.json"
+            val file = File(backupDir, fileName)
+            FileOutputStream(file).use { outputStream ->
+                outputStream.write(json.toByteArray())
             }
 
-            return@withContext jsonFile
+            return@withContext file
         } catch (e: Exception) {
-            Log.e(TAG, "exportAllData: Error", e)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "导出失败: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            e.printStackTrace()
             return@withContext null
         }
     }
@@ -113,326 +84,289 @@ object DataExporter {
     /**
      * 从 JSON 文件导入数据
      */
-    suspend fun importData(context: Context, uri: Uri): Boolean = withContext(Dispatchers.IO) {
+    suspend fun importData(context: Context, file: File): Boolean = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "importData: Starting import from $uri")
+            val json = file.readText()
+            importDataFromJson(context, json)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val json = inputStream?.bufferedReader().use { it?.readText() }
-            inputStream?.close()
-
-            if (json.isNullOrEmpty()) {
-                Log.e(TAG, "importData: Empty or null JSON")
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "文件为空或无效", Toast.LENGTH_SHORT).show()
-                }
-                return@withContext false
-            }
-
-            Log.d(TAG, "importData: JSON size=${json.length} bytes")
-
-            val type = object : TypeToken<ExportData>() {}.type
-            val exportData: ExportData = try {
-                gson.fromJson(json, type)
-            } catch (e: Exception) {
-                Log.e(TAG, "importData: JSON parse error", e)
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "文件格式错误: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-                return@withContext false
-            }
-
-            Log.d(TAG, "importData: Parsed data - paintings=${exportData.paintings.size}, " +
-                    "nodes=${exportData.nodes.size}, diaries=${exportData.diaries.size}")
+    /**
+     * 从 JSON 字符串导入数据
+     */
+    suspend fun importDataFromJson(context: Context, json: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            Log.d("DataExporter", "importDataFromJson: json length=${json.length}")
+            Log.d("DataExporter", "importDataFromJson: json preview=${json.take(500)}")
 
             val database = AppDatabase.getInstance(context)
+            val jsonObject = JSONObject(json)
 
-            // 开始事务（Room 会自动处理，但为了性能可以分批）
-            // 清空现有数据
-            Log.d(TAG, "importData: Clearing existing data")
+            // 打印所有顶级键
+            Log.d("DataExporter", "importDataFromJson: keys=${jsonObject.keys().asSequence().toList()}")
 
-            // 删除所有作品（会级联删除节点）
-            val existingWorks = database.workDao().getAllWorksSync()
-            existingWorks.forEach { work ->
-                database.workDao().softDeleteWork(work.id)
+            // 检查每个数组
+            Log.d("DataExporter", "importDataFromJson: works=${jsonObject.optJSONArray("works")?.length()}")
+            Log.d("DataExporter", "importDataFromJson: nodes=${jsonObject.optJSONArray("nodes")?.length()}")
+            Log.d("DataExporter", "importDataFromJson: goals=${jsonObject.optJSONArray("goals")?.length()}")
+            Log.d("DataExporter", "importDataFromJson: diaries=${jsonObject.optJSONArray("diaries")?.length()}")
+            Log.d("DataExporter", "importDataFromJson: dishes=${jsonObject.optJSONArray("dishes")?.length()}")
+            Log.d("DataExporter", "importDataFromJson: lotteryHistory=${jsonObject.optJSONArray("lotteryHistory")?.length()}")
+            Log.d("DataExporter", "importDataFromJson: checkins=${jsonObject.optJSONArray("checkins")?.length()}")
+            Log.d("DataExporter", "importDataFromJson: tasks=${jsonObject.optJSONArray("tasks")?.length()}")
+            Log.d("DataExporter", "importDataFromJson: taskNodes=${jsonObject.optJSONArray("taskNodes")?.length()}")
+
+            database.runInTransaction {
+                // 清空所有表
+                database.workDao().deleteAllSync()
+                database.nodeDao().deleteAllSync()
+                database.goalDao().deleteAllSync()
+                database.diaryDao().deleteAllSync()
+                database.dishDao().deleteAllSync()
+                database.lotteryHistoryDao().deleteAllSync()
+                database.checkinDao().deleteAllSync()
+                database.taskDao().deleteAllSync()
+                database.taskNodeDao().deleteAllSync()
+
+                Log.d("DataExporter", "importDataFromJson: cleared all tables")
+
+                // 导入数据
+                importWorks(database, jsonObject)
+                importNodes(database, jsonObject)
+                importGoals(database, jsonObject)
+                importDiaries(database, jsonObject)
+                importDishes(database, jsonObject)
+                importLotteryHistory(database, jsonObject)
+                importCheckins(database, jsonObject)
+                importTasks(database, jsonObject)
+                importTaskNodes(database, jsonObject)
+
+                Log.d("DataExporter", "importDataFromJson: all data imported")
             }
-            database.workDao().deletePermanently()
-
-            // 删除目标
-            val existingGoals = database.goalDao().getAllGoals()
-            existingGoals.forEach { goal ->
-                database.goalDao().deleteGoal(goal)
-            }
-
-            // 删除日记
-            val existingDiaries = database.diaryDao().getAllDiariesSync()
-            existingDiaries.forEach { diary ->
-                database.diaryDao().softDeleteDiary(diary.id)
-            }
-
-            // 删除菜品
-            val existingDishes = database.dishDao().getAllDishesSync()
-            existingDishes.forEach { dish ->
-                database.dishDao().deleteDish(dish)
-            }
-
-            // 删除抽选历史
-            val existingHistory = database.lotteryHistoryDao().getRecentHistory()
-            existingHistory.forEach { history ->
-                database.lotteryHistoryDao().deleteHistory(history)
-            }
-
-            // 删除签到
-            val existingCheckins = database.checkinDao().getAllCheckinsSync()
-            existingCheckins.forEach { checkin ->
-                database.checkinDao().deleteCheckin(checkin)
-            }
-
-            Log.d(TAG, "importData: Existing data cleared")
-
-            // 导入新数据
-            Log.d(TAG, "importData: Importing paintings")
-            exportData.paintings.forEach { work ->
-                try {
-                    database.workDao().insertWork(work)
-                } catch (e: Exception) {
-                    Log.e(TAG, "importData: Failed to import work ${work.title}", e)
-                }
-            }
-
-            Log.d(TAG, "importData: Importing nodes")
-            exportData.nodes.forEach { node ->
-                try {
-                    database.nodeDao().insertNode(node)
-                } catch (e: Exception) {
-                    Log.e(TAG, "importData: Failed to import node ${node.id}", e)
-                }
-            }
-
-            Log.d(TAG, "importData: Importing goals")
-            exportData.goals.forEach { goal ->
-                try {
-                    database.goalDao().insertGoal(goal)
-                } catch (e: Exception) {
-                    Log.e(TAG, "importData: Failed to import goal ${goal.title}", e)
-                }
-            }
-
-            Log.d(TAG, "importData: Importing diaries")
-            exportData.diaries.forEach { diary ->
-                try {
-                    database.diaryDao().insertDiary(diary)
-                } catch (e: Exception) {
-                    Log.e(TAG, "importData: Failed to import diary ${diary.id}", e)
-                }
-            }
-
-            Log.d(TAG, "importData: Importing dishes")
-            exportData.dishes.forEach { dish ->
-                try {
-                    database.dishDao().insertDish(dish)
-                } catch (e: Exception) {
-                    Log.e(TAG, "importData: Failed to import dish ${dish.name}", e)
-                }
-            }
-
-            Log.d(TAG, "importData: Importing lottery history")
-            exportData.lotteryHistory.forEach { history ->
-                try {
-                    database.lotteryHistoryDao().insertHistory(history)
-                } catch (e: Exception) {
-                    Log.e(TAG, "importData: Failed to import history ${history.id}", e)
-                }
-            }
-
-            Log.d(TAG, "importData: Importing checkins")
-            exportData.checkins.forEach { checkin ->
-                try {
-                    database.checkinDao().insertCheckin(checkin)
-                } catch (e: Exception) {
-                    Log.e(TAG, "importData: Failed to import checkin ${checkin.date}", e)
-                }
-            }
-
-            Log.d(TAG, "importData: Import completed successfully")
-
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "恢复成功！请重启应用以查看数据", Toast.LENGTH_LONG).show()
-            }
-
-            return@withContext true
+            true
         } catch (e: Exception) {
-            Log.e(TAG, "importData: Error", e)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "恢复失败: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-            return@withContext false
+            Log.e("DataExporter", "importDataFromJson failed", e)
+            false
         }
     }
 
-    /**
-     * 导出为字符串（用于调试）
-     */
-    suspend fun exportToString(context: Context): String? = withContext(Dispatchers.IO) {
-        try {
-            val database = AppDatabase.getInstance(context)
-
-            val paintings = database.workDao().getAllWorksSync()
-            val nodes = mutableListOf<NodeEntity>()
-            paintings.forEach { work ->
-                nodes.addAll(database.nodeDao().getNodesByWorkId(work.id))
-            }
-            val goals = database.goalDao().getAllGoals()
-            val diaries = database.diaryDao().getAllDiariesSync()
-            val dishes = database.dishDao().getAllDishesSync()
-            val lotteryHistory = database.lotteryHistoryDao().getRecentHistory()
-            val checkins = database.checkinDao().getAllCheckinsSync()
-
-            val exportData = ExportData(
-                exportTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date()),
-                version = "1.0",
-                paintings = paintings,
-                nodes = nodes,
-                goals = goals,
-                diaries = diaries,
-                dishes = dishes,
-                lotteryHistory = lotteryHistory,
-                checkins = checkins
-            )
-
-            return@withContext gson.toJson(exportData)
-        } catch (e: Exception) {
-            Log.e(TAG, "exportToString: Error", e)
-            return@withContext null
-        }
-    }
-
-    /**
-     * 清除缓存
-     */
-    suspend fun clearCache(context: Context) = withContext(Dispatchers.IO) {
-        try {
-            Log.d(TAG, "clearCache: Clearing cache")
-
-            val thumbnailsDir = FileUtils.getThumbnailsDir(context)
-            if (thumbnailsDir.exists()) {
-                val deleted = FileUtils.deleteDirectory(thumbnailsDir)
-                Log.d(TAG, "clearCache: Deleted thumbnails dir: $deleted")
-            }
-            thumbnailsDir.mkdirs()
-
-            // 清除 Glide 缓存
-            try {
-                Glide.get(context).clearDiskCache()
-                Log.d(TAG, "clearCache: Glide disk cache cleared")
-            } catch (e: Exception) {
-                Log.e(TAG, "clearCache: Failed to clear Glide cache", e)
-            }
-
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "缓存已清除", Toast.LENGTH_SHORT).show()
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "clearCache: Error", e)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "清除失败: ${e.message}", Toast.LENGTH_SHORT).show()
+    private fun importDiaries(database: AppDatabase, jsonObject: JSONObject) {
+        val diariesArray = jsonObject.optJSONArray("diaries")
+        Log.d("DataExporter", "importDiaries: array length=${diariesArray?.length()}")
+        if (diariesArray != null) {
+            for (i in 0 until diariesArray.length()) {
+                val diaryObj = diariesArray.getJSONObject(i)
+                Log.d("DataExporter", "importDiaries: diary $i, title=${diaryObj.optString("title")}, date=${diaryObj.optString("createdDate")}")
+                val diary = DiaryEntity(
+                    id = diaryObj.optLong("id", 0),
+                    title = diaryObj.optString("title", null),
+                    content = diaryObj.optString("content", ""),
+                    mood = diaryObj.optInt("mood", 0),
+                    weather = if (diaryObj.has("weather") && !diaryObj.isNull("weather"))
+                        diaryObj.optInt("weather") else null,
+                    tags = diaryObj.optString("tags", null),
+                    images = diaryObj.optString("images", null),
+                    createdDate = diaryObj.optString("createdDate", ""),
+                    createdTime = diaryObj.optLong("createdTime", 0),
+                    updatedTime = diaryObj.optLong("updatedTime", 0),
+                    isDeleted = diaryObj.optBoolean("isDeleted", false)
+                )
+                database.diaryDao().insertDiary(diary)
+                Log.d("DataExporter", "importDiaries: inserted diary id=${diary.id}")
             }
         }
     }
 
-    /**
-     * 导出指定作品的数据
-     */
-    suspend fun exportWork(context: Context, workId: Long): File? = withContext(Dispatchers.IO) {
-        try {
-            val database = AppDatabase.getInstance(context)
-            val work = database.workDao().getWorkById(workId)
-            val nodes = database.nodeDao().getNodesByWorkId(workId)
+    // ==================== 导入方法 ====================
 
-            val data = mapOf(
-                "work" to work,
-                "nodes" to nodes,
-                "exportTime" to SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-            )
-
-            val json = gson.toJson(data)
-            val exportDir = FileUtils.getExportDir(context)
-            val fileName = "work_${workId}_${System.currentTimeMillis()}.json"
-            val jsonFile = File(exportDir, fileName)
-
-            FileWriter(jsonFile).use { writer ->
-                writer.write(json)
+    private fun importWorks(database: AppDatabase, jsonObject: JSONObject) {
+        val worksArray = jsonObject.optJSONArray("works")
+        if (worksArray != null) {
+            for (i in 0 until worksArray.length()) {
+                val workObj = worksArray.getJSONObject(i)
+                val work = WorkEntity(
+                    id = workObj.optLong("id", 0),
+                    title = workObj.optString("title", ""),
+                    description = workObj.optString("description", null),
+                    finalImagePath = workObj.optString("finalImagePath", ""),
+                    totalDuration = workObj.optInt("totalDuration", 0),
+                    tags = workObj.optString("tags", null),
+                    createdDate = workObj.optString("createdDate", ""),
+                    createdTime = workObj.optLong("createdTime", 0),
+                    updatedTime = workObj.optLong("updatedTime", 0),
+                    isDeleted = workObj.optBoolean("isDeleted", false)
+                )
+                database.workDao().insertWork(work)
             }
+        }
+    }
 
-            Log.d(TAG, "exportWork: Success, file=${jsonFile.absolutePath}")
-            return@withContext jsonFile
-        } catch (e: Exception) {
-            Log.e(TAG, "exportWork: Error", e)
-            return@withContext null
+    private fun importNodes(database: AppDatabase, jsonObject: JSONObject) {
+        val nodesArray = jsonObject.optJSONArray("nodes")
+        if (nodesArray != null) {
+            for (i in 0 until nodesArray.length()) {
+                val nodeObj = nodesArray.getJSONObject(i)
+                val node = NodeEntity(
+                    id = nodeObj.optLong("id", 0),
+                    workId = nodeObj.optLong("workId", 0),
+                    nodeOrder = nodeObj.optInt("nodeOrder", 0),
+                    imagePath = nodeObj.optString("imagePath", ""),
+                    duration = nodeObj.optInt("duration", 0),
+                    cumulativeDuration = nodeObj.optInt("cumulativeDuration", 0),
+                    note = nodeObj.optString("note", null),
+                    referenceImagePath = nodeObj.optString("referenceImagePath", null),
+                    inspiration = nodeObj.optString("inspiration", null),
+                    createdTime = nodeObj.optLong("createdTime", 0)
+                )
+                database.nodeDao().insertNode(node)
+            }
+        }
+    }
+
+    private fun importGoals(database: AppDatabase, jsonObject: JSONObject) {
+        val goalsArray = jsonObject.optJSONArray("goals")
+        if (goalsArray != null) {
+            for (i in 0 until goalsArray.length()) {
+                val goalObj = goalsArray.getJSONObject(i)
+                val goal = GoalEntity(
+                    id = goalObj.optLong("id", 0),
+                    title = goalObj.optString("title", ""),
+                    description = goalObj.optString("description", null),
+                    targetDate = goalObj.optString("targetDate", null),
+                    startDate = goalObj.optString("startDate", ""),
+                    targetType = goalObj.optInt("targetType", 0),
+                    targetValue = goalObj.optInt("targetValue", 0),
+                    currentValue = goalObj.optInt("currentValue", 0),
+                    status = goalObj.optInt("status", 0),
+                    createdTime = goalObj.optLong("createdTime", 0),
+                    completedTime = if (goalObj.has("completedTime") && !goalObj.isNull("completedTime"))
+                        goalObj.optLong("completedTime") else null
+                )
+                database.goalDao().insertGoal(goal)
+            }
+        }
+    }
+
+
+
+
+
+    private fun importDishes(database: AppDatabase, jsonObject: JSONObject) {
+        val dishesArray = jsonObject.optJSONArray("dishes")
+        if (dishesArray != null) {
+            for (i in 0 until dishesArray.length()) {
+                val dishObj = dishesArray.getJSONObject(i)
+                val dish = DishEntity(
+                    id = dishObj.optLong("id", 0),
+                    name = dishObj.optString("name", ""),
+                    cuisine = dishObj.optString("cuisine", null),
+                    spicyLevel = dishObj.optInt("spicyLevel", 0),
+                    sortOrder = dishObj.optInt("sortOrder", 0),
+                    isActive = dishObj.optBoolean("isActive", true),
+                    createdTime = dishObj.optLong("createdTime", 0)
+                )
+                database.dishDao().insertDish(dish)
+            }
+        }
+    }
+
+    private fun importLotteryHistory(database: AppDatabase, jsonObject: JSONObject) {
+        val lotteryArray = jsonObject.optJSONArray("lotteryHistory")
+        if (lotteryArray != null) {
+            for (i in 0 until lotteryArray.length()) {
+                val lotteryObj = lotteryArray.getJSONObject(i)
+                val history = LotteryHistoryEntity(
+                    id = lotteryObj.optLong("id", 0),
+                    dishId = lotteryObj.optLong("dishId", 0),
+                    dishName = lotteryObj.optString("dishName", ""),
+                    selectedDate = lotteryObj.optString("selectedDate", ""),
+                    selectedTime = lotteryObj.optLong("selectedTime", 0)
+                )
+                database.lotteryHistoryDao().insertHistory(history)
+            }
+        }
+    }
+
+    private fun importCheckins(database: AppDatabase, jsonObject: JSONObject) {
+        val checkinsArray = jsonObject.optJSONArray("checkins")
+        if (checkinsArray != null) {
+            for (i in 0 until checkinsArray.length()) {
+                val checkinObj = checkinsArray.getJSONObject(i)
+                val checkin = CheckinEntity(
+                    date = checkinObj.optString("date", ""),
+                    createdTime = checkinObj.optLong("createdTime", 0),
+                    note = checkinObj.optString("note", null)
+                )
+                database.checkinDao().insertCheckin(checkin)
+            }
+        }
+    }
+
+    private fun importTasks(database: AppDatabase, jsonObject: JSONObject) {
+        val tasksArray = jsonObject.optJSONArray("tasks")
+        if (tasksArray != null) {
+            for (i in 0 until tasksArray.length()) {
+                val taskObj = tasksArray.getJSONObject(i)
+                val task = TaskEntity(
+                    id = taskObj.optLong("id", 0),
+                    title = taskObj.optString("title", ""),
+                    description = taskObj.optString("description", null),
+                    isUrgent = taskObj.optBoolean("isUrgent", false),
+                    isImportant = taskObj.optBoolean("isImportant", false),
+                    deadline = if (taskObj.has("deadline") && !taskObj.isNull("deadline"))
+                        taskObj.optLong("deadline") else null,
+                    createdAt = taskObj.optLong("createdAt", 0),
+                    completedAt = if (taskObj.has("completedAt") && !taskObj.isNull("completedAt"))
+                        taskObj.optLong("completedAt") else null,
+                    isDeleted = taskObj.optBoolean("isDeleted", false)
+                )
+                database.taskDao().insertTask(task)
+            }
+        }
+    }
+
+    private fun importTaskNodes(database: AppDatabase, jsonObject: JSONObject) {
+        val taskNodesArray = jsonObject.optJSONArray("taskNodes")
+        if (taskNodesArray != null) {
+            for (i in 0 until taskNodesArray.length()) {
+                val nodeObj = taskNodesArray.getJSONObject(i)
+                val node = TaskNodeEntity(
+                    id = nodeObj.optLong("id", 0),
+                    taskId = nodeObj.optLong("taskId", 0),
+                    title = nodeObj.optString("title", ""),
+                    description = nodeObj.optString("description", null),
+                    deadline = if (nodeObj.has("deadline") && !nodeObj.isNull("deadline"))
+                        nodeObj.optLong("deadline") else null,
+                    isCompleted = nodeObj.optBoolean("isCompleted", false),
+                    completedAt = if (nodeObj.has("completedAt") && !nodeObj.isNull("completedAt"))
+                        nodeObj.optLong("completedAt") else null,
+                    sortOrder = nodeObj.optInt("sortOrder", 0),
+                    createdAt = nodeObj.optLong("createdAt", 0)
+                )
+                database.taskNodeDao().insertNode(node)
+            }
         }
     }
 
     /**
-     * 导出日记数据
+     * 获取所有备份文件
      */
-    suspend fun exportDiary(context: Context, diaryId: Long): File? = withContext(Dispatchers.IO) {
-        try {
-            val database = AppDatabase.getInstance(context)
-            val diary = database.diaryDao().getDiaryById(diaryId)
-
-            val data = mapOf(
-                "diary" to diary,
-                "exportTime" to SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-            )
-
-            val json = gson.toJson(data)
-            val exportDir = FileUtils.getExportDir(context)
-            val fileName = "diary_${diaryId}_${System.currentTimeMillis()}.json"
-            val jsonFile = File(exportDir, fileName)
-
-            FileWriter(jsonFile).use { writer ->
-                writer.write(json)
-            }
-
-            Log.d(TAG, "exportDiary: Success, file=${jsonFile.absolutePath}")
-            return@withContext jsonFile
-        } catch (e: Exception) {
-            Log.e(TAG, "exportDiary: Error", e)
-            return@withContext null
-        }
+    fun getBackupFiles(context: Context): List<File> {
+        val backupDir = File(context.filesDir, "backups")
+        return backupDir.listFiles { file -> file.extension == "json" }?.sortedByDescending { it.lastModified() } ?: emptyList()
     }
 
     /**
-     * 获取导出目录大小
+     * 删除备份文件
      */
-    suspend fun getExportDirSize(context: Context): Long = withContext(Dispatchers.IO) {
-        try {
-            val exportDir = FileUtils.getExportDir(context)
-            FileUtils.getDirectorySize(exportDir)
+    fun deleteBackupFile(file: File): Boolean {
+        return try {
+            file.delete()
         } catch (e: Exception) {
-            Log.e(TAG, "getExportDirSize: Error", e)
-            0L
-        }
-    }
-
-    /**
-     * 清理旧导出文件（保留最近N个）
-     */
-    suspend fun cleanOldExports(context: Context, keepCount: Int = 10) = withContext(Dispatchers.IO) {
-        try {
-            val exportDir = FileUtils.getExportDir(context)
-            val files = exportDir.listFiles()?.filter { it.isFile && it.name.endsWith(".json") } ?: return@withContext
-
-            if (files.size > keepCount) {
-                val sortedFiles = files.sortedByDescending { it.lastModified() }
-                val toDelete = sortedFiles.drop(keepCount)
-                toDelete.forEach { file ->
-                    val deleted = file.delete()
-                    Log.d(TAG, "cleanOldExports: Deleted ${file.name}: $deleted")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "cleanOldExports: Error", e)
+            false
         }
     }
 }

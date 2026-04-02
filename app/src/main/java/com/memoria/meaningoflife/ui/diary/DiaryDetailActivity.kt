@@ -56,8 +56,12 @@ class DiaryDetailActivity : BaseActivity() {
                 return@observe
             }
 
-            val mood = Mood.fromValue(diary.mood)
-            val weather = Weather.fromValue(diary.weather)
+            // 修复：处理可能为 null 的 mood 和 weather
+            val moodValue = diary.mood ?: 2  // 默认值为 2（平静）
+            val weatherValue = diary.weather ?: 0  // 默认值为 0（晴天）
+
+            val mood = Mood.fromValue(moodValue)
+            val weather = Weather.fromValue(weatherValue)
 
             binding.tvDate.text = DateUtils.formatDate(diary.createdDate)
             binding.tvMood.text = "${mood.icon} ${mood.text}"

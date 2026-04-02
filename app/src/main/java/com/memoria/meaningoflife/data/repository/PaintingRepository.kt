@@ -16,6 +16,18 @@ class PaintingRepository(private val database: AppDatabase) {
     suspend fun getWorkById(workId: Long): WorkEntity? = withContext(Dispatchers.IO) {
         database.workDao().getWorkById(workId)
     }
+    // 在 PaintingRepository 中添加
+    suspend fun getAllWorksSync(): List<WorkEntity> = withContext(Dispatchers.IO) {
+        database.workDao().getAllWorksSync()
+    }
+
+    suspend fun getAllNodesSync(): List<NodeEntity> = withContext(Dispatchers.IO) {
+        database.nodeDao().getAllNodesSync()
+    }
+
+    suspend fun getAllGoalsSync(): List<GoalEntity> = withContext(Dispatchers.IO) {
+        database.goalDao().getAllGoalsSync()
+    }
 
     suspend fun getWorksByDateRange(startDate: String, endDate: String): List<WorkEntity> = withContext(Dispatchers.IO) {
         database.workDao().getWorksByDateRange(startDate, endDate)

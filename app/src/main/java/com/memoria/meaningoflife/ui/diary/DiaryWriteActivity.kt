@@ -213,8 +213,11 @@ class DiaryWriteActivity : BaseActivity() {
             existingDiary?.let { diary ->
                 binding.etTitle.setText(diary.title)
                 binding.etContent.setText(diary.content)
-                selectedMood = Mood.fromValue(diary.mood)
-                selectedWeather = Weather.fromValue(diary.weather)
+                // 修复：处理可能为 null 的 mood 和 weather
+                val moodValue = diary.mood ?: 2  // 默认 NORMAL
+                val weatherValue = diary.weather ?: 0  // 默认 SUNNY
+                selectedMood = Mood.fromValue(moodValue)
+                selectedWeather = Weather.fromValue(weatherValue)
 
                 diary.tags?.let { tagsJson ->
                     val tags = JsonHelper.jsonToTags(tagsJson)
@@ -250,7 +253,7 @@ class DiaryWriteActivity : BaseActivity() {
     }
 
     private fun saveDiary() {
-        LogManager.i("PaintingActivity", "PaintingActivity onCreate")
+        LogManager.i("DiaryWriteActivity", "Saving diary")
         val title = binding.etTitle.text.toString().trim()
         val content = binding.etContent.text.toString().trim()
 

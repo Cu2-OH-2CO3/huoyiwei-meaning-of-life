@@ -20,6 +20,15 @@ interface NodeDao {
     @Delete
     fun deleteNode(node: NodeEntity)
 
+    @Query("SELECT * FROM nodes")
+    fun getAllNodesSync(): List<NodeEntity>
+
+    @Query("DELETE FROM nodes")
+    fun deleteAll()
+
+    @Query("DELETE FROM nodes")
+    fun deleteAllSync()
+
     @Query("DELETE FROM nodes WHERE work_id = :workId")
     fun deleteNodesByWorkId(workId: Long)
 

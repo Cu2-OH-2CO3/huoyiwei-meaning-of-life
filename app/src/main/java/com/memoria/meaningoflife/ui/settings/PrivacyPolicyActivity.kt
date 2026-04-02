@@ -139,7 +139,7 @@ class PrivacyPolicyActivity : BaseActivity() {
             致谢：
             感谢我的游戏群友们，在我开发的路上提供了致命诱惑的作用。
             感谢kotimatka提供了很多的反馈和命名的灵感！
-            感谢咚麻和jyydyxrsg帮忙测试了应用在不同手机上的兼容性！
+            感谢咚麻，kotimatka，jyydyxrsg，sapapyns帮忙测试并且给予我使用反馈！
             
             
             感谢老大使用活意味喵！希望老大在地球OL打猎时也能寻找到生活的意义喵！

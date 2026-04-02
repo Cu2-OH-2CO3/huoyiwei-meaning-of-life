@@ -104,14 +104,6 @@ class NodeEditActivity : BaseActivity() {
                         .into(binding.ivPreview)
                     binding.btnSelectImage.text = "更换图片"
                 }
-                // 参考图
-                if (!node.referenceImagePath.isNullOrEmpty()) {
-                    com.bumptech.glide.Glide
-                        .with(this@NodeEditActivity)
-                        .load(node.referenceImagePath)
-                        .into(binding.ivReference)
-                    binding.tvReferenceHint.visibility = android.view.View.VISIBLE
-                }
                 // 灵感记录
                 if (!node.inspiration.isNullOrEmpty()) {
                     binding.etInspiration.setText(node.inspiration)
@@ -181,7 +173,7 @@ class NodeEditActivity : BaseActivity() {
                 duration = duration,
                 cumulativeDuration = cumulativeDuration,
                 note = note,
-                referenceImagePath = null,  // 可扩展
+                referenceImagePath = null,
                 inspiration = inspiration.ifEmpty { null }
             )
 

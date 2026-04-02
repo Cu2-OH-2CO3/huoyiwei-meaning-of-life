@@ -52,6 +52,7 @@ class WorkDetailActivity : BaseActivity() {
     private fun setupRecyclerView() {
         nodeAdapter = NodeListAdapter(
             onNodeClick = { node ->
+                // 点击节点，打开编辑页面
                 val intent = Intent(this, NodeEditActivity::class.java)
                 intent.putExtra("work_id", workId)
                 intent.putExtra("node_id", node.id)
@@ -83,7 +84,10 @@ class WorkDetailActivity : BaseActivity() {
         }
 
         binding.btnEditWork.setOnClickListener {
-            Toast.makeText(this, "编辑功能开发中", Toast.LENGTH_SHORT).show()
+            // 编辑作品信息
+            val intent = Intent(this, AddWorkActivity::class.java)
+            intent.putExtra("work_id", workId)
+            startActivity(intent)
         }
 
         binding.btnDeleteWork.setOnClickListener {

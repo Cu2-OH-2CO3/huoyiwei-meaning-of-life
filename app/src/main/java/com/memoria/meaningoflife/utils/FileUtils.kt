@@ -1,6 +1,7 @@
 package com.memoria.meaningoflife.utils
 
 import android.content.Context
+import android.net.Uri
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -17,6 +18,22 @@ object FileUtils {
         val dir = File(getAppStorageDir(context), "paintings")
         if (!dir.exists()) dir.mkdirs()
         return dir
+    }
+
+    fun getFileFromUri(context: Context, uri: Uri): File? {
+        return try {
+            val contentResolver = context.contentResolver
+            val inputStream = contentResolver.openInputStream(uri) ?: return null
+            val tempFile = File(context.cacheDir, "temp_restore_${System.currentTimeMillis()}.json")
+            tempFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+            inputStream.close()
+            tempFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     fun getDiariesDir(context: Context): File {
@@ -89,6 +106,13 @@ object FileUtils {
         } catch (e: Exception) {
             false
         }
+    }
+
+    fun getReadableFileSize(size: Long): String {
+        if (size <= 0) return "0 B"
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(size.toDouble()) / Math.log10(1024.0)).toInt()
+        return String.format("%.1f %s", size / Math.pow(1024.0, digitGroups.toDouble()), units[digitGroups])
     }
 
     private fun addToZip(file: File, fileName: String, zipOut: ZipOutputStream) {

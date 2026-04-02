@@ -9,6 +9,13 @@ interface DishDao {
     @Query("SELECT * FROM dishes ORDER BY sort_order ASC, id ASC")
     fun getAllDishes(): Flow<List<DishEntity>>
 
+    @Query("DELETE FROM dishes")
+    fun deleteAll()
+
+    @Query("DELETE FROM dishes")
+    fun deleteAllSync()
+
+
     @Query("SELECT * FROM dishes ORDER BY sort_order ASC, id ASC")
     fun getAllDishesSync(): List<DishEntity>
 

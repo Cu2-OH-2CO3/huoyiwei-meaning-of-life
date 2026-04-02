@@ -18,6 +18,10 @@ class LunchRepository(private val database: AppDatabase) {
         database.dishDao().getAllDishesSync()
     }
 
+    suspend fun getAllLotteryHistorySync(): List<LotteryHistoryEntity> = withContext(Dispatchers.IO) {
+        database.lotteryHistoryDao().getAllHistorySync()
+    }
+
     suspend fun getActiveDishes(): List<DishEntity> = withContext(Dispatchers.IO) {
         database.dishDao().getActiveDishes()
     }

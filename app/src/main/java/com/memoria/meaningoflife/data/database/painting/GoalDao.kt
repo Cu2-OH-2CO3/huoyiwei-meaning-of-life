@@ -8,6 +8,9 @@ interface GoalDao {
     @Query("SELECT * FROM goals WHERE status = 0 ORDER BY target_date ASC")
     fun getActiveGoals(): List<GoalEntity>
 
+    @Query("SELECT * FROM goals")
+    fun getAllGoalsSync(): List<GoalEntity>
+
     @Query("SELECT * FROM goals WHERE status = 0 LIMIT 1")
     fun getCurrentGoal(): GoalEntity?
 
@@ -19,6 +22,12 @@ interface GoalDao {
 
     @Insert
     fun insertGoal(goal: GoalEntity): Long
+
+    @Query("DELETE FROM goals")
+    fun deleteAll()
+
+    @Query("DELETE FROM goals")
+    fun deleteAllSync()
 
     @Update
     fun updateGoal(goal: GoalEntity)

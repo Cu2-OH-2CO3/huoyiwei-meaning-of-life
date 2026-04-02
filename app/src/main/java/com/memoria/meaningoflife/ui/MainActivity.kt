@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.databinding.ActivityMainBinding
+import com.memoria.meaningoflife.ui.home.HomeFragment
 import com.memoria.meaningoflife.utils.LogManager
 
 class MainActivity : BaseActivity() {
@@ -15,6 +16,16 @@ class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var pagerAdapter: MainPagerAdapter
     private lateinit var prefs: SharedPreferences
+
+
+    // 在 MainActivity 中添加
+    fun refreshHomeModules() {
+        // 通过 ViewPager2 获取 HomeFragment 并刷新
+        val homeFragment = supportFragmentManager.fragments
+            .filterIsInstance<HomeFragment>()
+            .firstOrNull()
+        homeFragment?.refreshModuleColors()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

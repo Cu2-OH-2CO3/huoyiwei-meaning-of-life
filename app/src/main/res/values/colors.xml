@@ -50,4 +50,11 @@
     <color name="spicy_mild">#FFC107</color>
     <color name="spicy_medium">#FF9800</color>
     <color name="spicy_hot">#F44336</color>
+
+    <!-- 任务优先级颜色 -->
+    <color name="task_urgent_important">#FF5252</color>  <!-- 红色 -->
+    <color name="task_urgent_not_important">#FF9800</color>  <!-- 橙色 -->
+    <color name="task_not_urgent_important">#2196F3</color>  <!-- 蓝色 -->
+    <color name="task_not_urgent_not_important">#4CAF50</color>  <!-- 绿色 -->
+    <color name="task_overdue">#FF5252</color>
 </resources>

@@ -166,6 +166,23 @@
 
                 </LinearLayout>
 
+                <!-- 在界面外观部分，主题颜色选择之后添加 -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <!-- 卡片颜色设置 -->
+                <TextView
+                    android:id="@+id/btnCardColors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="🎨 卡片颜色"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:background="?selectableItemBackground" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"

@@ -7,39 +7,39 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.memoria.meaningoflife.R
+import com.memoria.meaningoflife.data.database.task.TaskPriority
 import com.memoria.meaningoflife.model.Mood
 import com.memoria.meaningoflife.utils.DateUtils
 
 class CalendarFragment : Fragment() {
 
     private lateinit var viewModel: CalendarViewModel
-    private lateinit var tvDetailDate: TextView
-    private lateinit var tvDetailPainting: TextView
-    private lateinit var tvDetailDiary: TextView
     private lateinit var customCalendarView: CustomCalendarView
-    private var currentMode = 0 // 0=全部, 1=绘画, 2=日记
+    private var currentMode = 0
     private var customTypeface: Typeface? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(0, 0, 0, 0)
-            setBackgroundColor(resources.getColor(R.color.background, null))
+            setBackgroundColor(ContextCompat.getColor(context, R.color.background))
         }
 
-        // 加载字体
         try {
             customTypeface = ResourcesCompat.getFont(requireContext(), R.font.lxgw)
         } catch (e: Exception) {
             customTypeface = null
         }
 
-        // 添加模式切换按钮
-        val chipGroup = com.google.android.material.chip.ChipGroup(requireContext()).apply {
+        // 模式切换按钮
+        val chipGroup = ChipGroup(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -49,21 +49,21 @@ class CalendarFragment : Fragment() {
             isSingleSelection = true
         }
 
-        val chipAll = com.google.android.material.chip.Chip(requireContext()).apply {
+        val chipAll = Chip(requireContext()).apply {
             id = View.generateViewId()
             text = "全部"
             isCheckable = true
             tag = 0
             customTypeface?.let { typeface = it }
         }
-        val chipPainting = com.google.android.material.chip.Chip(requireContext()).apply {
+        val chipPainting = Chip(requireContext()).apply {
             id = View.generateViewId()
             text = "绘画"
             isCheckable = true
             tag = 1
             customTypeface?.let { typeface = it }
         }
-        val chipDiary = com.google.android.material.chip.Chip(requireContext()).apply {
+        val chipDiary = Chip(requireContext()).apply {
             id = View.generateViewId()
             text = "日记"
             isCheckable = true
@@ -77,7 +77,7 @@ class CalendarFragment : Fragment() {
         chipAll.isChecked = true
         rootView.addView(chipGroup)
 
-        // 添加自定义日历视图
+        // 日历视图
         customCalendarView = CustomCalendarView(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -87,6 +87,7 @@ class CalendarFragment : Fragment() {
             setOnDateSelectedListener { year, month, day ->
                 val date = "$year-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}"
                 viewModel.loadDayDetail(date, currentMode)
+                viewModel.loadDrawerContent(date)
             }
             setOnMonthChangedListener { year, month ->
                 val startDate = "$year-${month.toString().padStart(2, '0')}-01"
@@ -96,63 +97,6 @@ class CalendarFragment : Fragment() {
             }
         }
         rootView.addView(customCalendarView)
-
-        // 添加详情区域卡片
-        val detailCard = android.widget.ScrollView(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(16, 8, 16, 16)
-            }
-        }
-
-        val detailContainer = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(16, 16, 16, 16)
-            setBackgroundColor(resources.getColor(R.color.card_background, null))
-            setBackgroundResource(R.drawable.card_background)
-        }
-
-        tvDetailDate = TextView(requireContext()).apply {
-            text = "请选择日期"
-            textSize = 16f
-            setTextColor(resources.getColor(R.color.text_primary, null))
-            customTypeface?.let { typeface = it }
-            setTypeface(customTypeface, Typeface.BOLD)
-            val params = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            params.bottomMargin = 12
-            layoutParams = params
-        }
-
-        tvDetailPainting = TextView(requireContext()).apply {
-            text = "无绘画记录"
-            textSize = 14f
-            setTextColor(resources.getColor(R.color.text_secondary, null))
-            customTypeface?.let { typeface = it }
-            val params = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            params.bottomMargin = 8
-            layoutParams = params
-        }
-
-        tvDetailDiary = TextView(requireContext()).apply {
-            text = "无日记记录"
-            textSize = 14f
-            setTextColor(resources.getColor(R.color.text_secondary, null))
-            customTypeface?.let { typeface = it }
-        }
-
-        detailContainer.addView(tvDetailDate)
-        detailContainer.addView(tvDetailPainting)
-        detailContainer.addView(tvDetailDiary)
-        detailCard.addView(detailContainer)
-        rootView.addView(detailCard)
 
         // 初始化 ViewModel
         viewModel = ViewModelProvider(this)[CalendarViewModel::class.java]
@@ -167,13 +111,13 @@ class CalendarFragment : Fragment() {
             }
             customCalendarView.setMode(currentMode)
 
-            // 刷新当前日期详情
             val calendar = java.util.Calendar.getInstance()
             val year = calendar.get(java.util.Calendar.YEAR)
             val month = calendar.get(java.util.Calendar.MONTH) + 1
             val day = calendar.get(java.util.Calendar.DAY_OF_MONTH)
             val currentDate = "$year-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}"
             viewModel.loadDayDetail(currentDate, currentMode)
+            viewModel.loadDrawerContent(currentDate)
         }
 
         // 加载当月数据
@@ -188,6 +132,7 @@ class CalendarFragment : Fragment() {
         val day = calendar.get(java.util.Calendar.DAY_OF_MONTH)
         val currentDate = "$year-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}"
         viewModel.loadDayDetail(currentDate, currentMode)
+        viewModel.loadDrawerContent(currentDate)
 
         // 观察标记数据
         viewModel.markedDatesData.observe(viewLifecycleOwner) { data ->
@@ -199,60 +144,61 @@ class CalendarFragment : Fragment() {
             customCalendarView.setDiaryMoods(moods)
         }
 
-        // 观察详情数据
-        viewModel.selectedDayData.observe(viewLifecycleOwner) { dayData ->
-            if (dayData == null) {
-                tvDetailDate.text = "请选择日期"
-                tvDetailPainting.text = "无记录"
-                tvDetailDiary.text = "无记录"
-                return@observe
-            }
-
-            tvDetailDate.text = DateUtils.formatDate(dayData.date)
-
-            when (currentMode) {
-                0 -> {
-                    if (dayData.hasPainting) {
-                        tvDetailPainting.text = "✅ 绘画：${dayData.paintingCount}幅作品"
-                        tvDetailPainting.setTextColor(resources.getColor(R.color.calendar_painting, null))
-                    } else {
-                        tvDetailPainting.text = "❌ 无绘画记录"
-                        tvDetailPainting.setTextColor(resources.getColor(R.color.text_secondary, null))
-                    }
-
-                    if (dayData.hasDiary) {
-                        val moodText = dayData.diaryMood?.let { "${it.icon} ${it.text}" } ?: ""
-                        tvDetailDiary.text = "✅ 日记：$moodText"
-                        tvDetailDiary.setTextColor(resources.getColor(R.color.calendar_diary, null))
-                    } else {
-                        tvDetailDiary.text = "❌ 无日记"
-                        tvDetailDiary.setTextColor(resources.getColor(R.color.text_secondary, null))
-                    }
-                }
-                1 -> {
-                    if (dayData.hasPainting) {
-                        tvDetailPainting.text = "✅ 完成${dayData.paintingCount}幅作品"
-                        tvDetailPainting.setTextColor(resources.getColor(R.color.calendar_painting, null))
-                    } else {
-                        tvDetailPainting.text = "❌ 无绘画记录"
-                        tvDetailPainting.setTextColor(resources.getColor(R.color.text_secondary, null))
-                    }
-                    tvDetailDiary.text = ""
-                }
-                2 -> {
-                    if (dayData.hasDiary) {
-                        val moodText = dayData.diaryMood?.let { "${it.icon} ${it.text}" } ?: ""
-                        tvDetailDiary.text = "✅ 已记录 $moodText"
-                        tvDetailDiary.setTextColor(resources.getColor(R.color.calendar_diary, null))
-                    } else {
-                        tvDetailDiary.text = "❌ 无日记"
-                        tvDetailDiary.setTextColor(resources.getColor(R.color.text_secondary, null))
-                    }
-                    tvDetailPainting.text = ""
-                }
-            }
+        // 观察抽屉内容数据 - 统一更新
+        viewModel.drawerTasks.observe(viewLifecycleOwner) { _ ->
+            updateDrawerContent()
+        }
+        viewModel.drawerDiaries.observe(viewLifecycleOwner) { _ ->
+            updateDrawerContent()
+        }
+        viewModel.drawerPaintings.observe(viewLifecycleOwner) { paintings ->
+            android.util.Log.d("CalendarFragment", "绘画记录更新: count=${paintings.size}")
+            updateDrawerContent()
         }
 
         return rootView
+    }
+
+    private fun updateDrawerContent() {
+        val tasks = viewModel.drawerTasks.value ?: emptyList()
+        val diaries = viewModel.drawerDiaries.value ?: emptyList()
+        val paintings = viewModel.drawerPaintings.value ?: emptyList()
+
+        android.util.Log.d("CalendarFragment", "updateDrawerContent: tasks=${tasks.size}, diaries=${diaries.size}, paintings=${paintings.size}")
+
+        val drawerTasks = tasks.map { task ->
+            val priorityColor = when (task.getPriority()) {
+                TaskPriority.URGENT_IMPORTANT -> ContextCompat.getColor(requireContext(), R.color.task_urgent_important)
+                TaskPriority.URGENT_NOT_IMPORTANT -> ContextCompat.getColor(requireContext(), R.color.task_urgent_not_important)
+                TaskPriority.NOT_URGENT_IMPORTANT -> ContextCompat.getColor(requireContext(), R.color.task_not_urgent_important)
+                TaskPriority.NOT_URGENT_NOT_IMPORTANT -> ContextCompat.getColor(requireContext(), R.color.task_not_urgent_not_important)
+            }
+            CustomCalendarView.DrawerTaskItem(
+                id = task.id,
+                title = task.title,
+                priority = "",
+                priorityColor = priorityColor,
+                deadline = task.deadline?.let { DateUtils.formatDate(it) }
+            )
+        }
+
+        val drawerDiaries = diaries.map { diary ->
+            CustomCalendarView.DrawerDiaryItem(
+                id = diary.id,
+                title = diary.title,
+                content = diary.content.take(50),
+                moodIcon = Mood.fromValue(diary.mood).icon
+            )
+        }
+
+        val drawerPaintings = paintings.map { painting ->
+            CustomCalendarView.DrawerPaintingItem(
+                id = painting.id,
+                title = painting.title,
+                thumbnailPath = painting.finalImagePath
+            )
+        }
+
+        customCalendarView.setDrawerContent(drawerTasks, drawerDiaries, drawerPaintings)
     }
 }

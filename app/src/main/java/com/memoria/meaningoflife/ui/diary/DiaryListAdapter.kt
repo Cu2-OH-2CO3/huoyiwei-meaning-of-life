@@ -31,8 +31,12 @@ class DiaryListAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(diary: DiaryEntity) {
-            val mood = Mood.fromValue(diary.mood)
-            val weather = Weather.fromValue(diary.weather)
+            // 修复：处理可能为 null 的 mood 和 weather
+            val moodValue = diary.mood ?: 2  // 默认 NORMAL
+            val weatherValue = diary.weather ?: 0  // 默认 SUNNY
+
+            val mood = Mood.fromValue(moodValue)
+            val weather = Weather.fromValue(weatherValue)
 
             binding.tvDate.text = DateUtils.formatDate(diary.createdDate)
             binding.tvMood.text = "${mood.icon} ${mood.text}"

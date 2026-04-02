@@ -8,8 +8,15 @@ interface CheckinDao {
     @Query("SELECT * FROM checkins ORDER BY date DESC")
     fun getAllCheckins(): List<CheckinEntity>
 
+    @Query("DELETE FROM checkins")
+    fun deleteAll()
+
+    @Query("DELETE FROM checkins")
+    fun deleteAllSync()
+
     @Query("SELECT * FROM checkins ORDER BY date DESC")
     fun getAllCheckinsSync(): List<CheckinEntity>
+
 
     @Query("SELECT * FROM checkins WHERE date = :date")
     fun getCheckinByDate(date: String): CheckinEntity?

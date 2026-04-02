@@ -16,6 +16,11 @@ class DiaryRepository(private val database: AppDatabase) {
         database.diaryDao().getDiaryById(diaryId)
     }
 
+    // 在 DiaryRepository 中添加
+    suspend fun getAllDiariesSync(): List<DiaryEntity> = withContext(Dispatchers.IO) {
+        database.diaryDao().getAllDiariesSync()
+    }
+
     suspend fun getDiaryByDate(date: String): DiaryEntity? = withContext(Dispatchers.IO) {
         database.diaryDao().getDiaryByDate(date)
     }

@@ -11,6 +11,15 @@ interface LotteryHistoryDao {
     @Query("SELECT * FROM lottery_history WHERE selected_date = :date")
     fun getHistoryByDate(date: String): LotteryHistoryEntity?
 
+    @Query("DELETE FROM lottery_history")
+    fun deleteAll()
+
+    @Query("DELETE FROM lottery_history")
+    fun deleteAllSync()
+
+    @Query("SELECT * FROM lottery_history")
+    fun getAllHistorySync(): List<LotteryHistoryEntity>
+
     @Insert
     fun insertHistory(history: LotteryHistoryEntity): Long
 

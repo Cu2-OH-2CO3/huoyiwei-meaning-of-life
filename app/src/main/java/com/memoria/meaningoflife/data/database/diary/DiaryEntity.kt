@@ -20,7 +20,7 @@ data class DiaryEntity(
     val mood: Int = 2,
 
     @ColumnInfo(name = "weather")
-    val weather: Int = 1,
+    val weather: Int? = null,  // 确保是可空类型
 
     @ColumnInfo(name = "tags")
     val tags: String? = null,

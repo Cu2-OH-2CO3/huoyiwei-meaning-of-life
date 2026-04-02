@@ -19,6 +19,7 @@ import com.memoria.meaningoflife.databinding.FragmentHomeBinding
 import com.memoria.meaningoflife.ui.diary.DiaryActivity
 import com.memoria.meaningoflife.ui.lunch.LunchActivity
 import com.memoria.meaningoflife.ui.painting.PaintingActivity
+import com.memoria.meaningoflife.ui.task.TaskListActivity
 import com.memoria.meaningoflife.utils.BackgroundManager
 import com.memoria.meaningoflife.utils.QuoteManager
 import java.io.File
@@ -182,6 +183,11 @@ class HomeFragment : Fragment() {
         )
         Log.d(TAG, "clearBackground: Background cleared")
     }
+    fun refreshModuleColors() {
+        // 重新加载模块数据，触发适配器更新
+        viewModel.loadStats()
+        viewModel.loadVisibleModules()
+    }
 
     private fun setupModuleRecyclerView() {
         moduleAdapter = HomeModuleAdapter(
@@ -192,6 +198,7 @@ class HomeFragment : Fragment() {
                         "painting" -> startActivity(Intent(requireContext(), PaintingActivity::class.java))
                         "diary" -> startActivity(Intent(requireContext(), DiaryActivity::class.java))
                         "lunch" -> startActivity(Intent(requireContext(), LunchActivity::class.java))
+                        "task" -> startActivity(Intent(requireContext(), TaskListActivity::class.java))
                     }
                 }
             },

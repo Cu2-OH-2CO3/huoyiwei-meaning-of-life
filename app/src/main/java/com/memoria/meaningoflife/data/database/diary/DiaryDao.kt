@@ -9,6 +9,11 @@ interface DiaryDao {
     @Query("SELECT * FROM diaries WHERE is_deleted = 0 ORDER BY created_date DESC")
     fun getAllDiaries(): Flow<List<DiaryEntity>>
 
+    @Query("DELETE FROM diaries")
+    fun deleteAll()
+
+
+
     @Query("SELECT * FROM diaries WHERE is_deleted = 0 ORDER BY created_date DESC")
     fun getAllDiariesSync(): List<DiaryEntity>
 
@@ -17,6 +22,9 @@ interface DiaryDao {
 
     @Query("SELECT * FROM diaries WHERE created_date = :date AND is_deleted = 0")
     fun getDiaryByDate(date: String): DiaryEntity?
+
+    @Query("DELETE FROM diaries")
+    fun deleteAllSync()
 
     @Query("SELECT * FROM diaries WHERE created_date BETWEEN :startDate AND :endDate AND is_deleted = 0 ORDER BY created_date DESC")
     fun getDiariesByDateRange(startDate: String, endDate: String): List<DiaryEntity>

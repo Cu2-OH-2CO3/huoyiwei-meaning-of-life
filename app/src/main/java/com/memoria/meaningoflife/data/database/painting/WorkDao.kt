@@ -34,9 +34,20 @@ interface WorkDao {
     @Update
     fun updateWork(work: WorkEntity)
 
+    @Query("DELETE FROM works")
+    fun deleteAll()
+
+    @Query("DELETE FROM works")
+    fun deleteAllSync()
+
+
+
+
     @Query("UPDATE works SET is_deleted = 1, updated_time = :updatedTime WHERE id = :workId")
     fun softDeleteWork(workId: Long, updatedTime: Long = System.currentTimeMillis())
 
     @Query("DELETE FROM works WHERE is_deleted = 1")
     fun deletePermanently()
+
+
 }

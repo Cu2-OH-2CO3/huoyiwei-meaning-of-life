@@ -36,6 +36,23 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- 作品描述 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="作品描述（可选）"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- 时长输入 -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

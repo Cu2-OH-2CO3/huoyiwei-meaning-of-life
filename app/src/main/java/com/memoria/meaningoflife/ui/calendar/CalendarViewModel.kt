@@ -5,16 +5,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.memoria.meaningoflife.MeaningOfLifeApp
+import com.memoria.meaningoflife.data.database.diary.DiaryEntity
+import com.memoria.meaningoflife.data.database.painting.WorkEntity
+import com.memoria.meaningoflife.data.database.task.TaskEntity
 import com.memoria.meaningoflife.data.repository.DiaryRepository
 import com.memoria.meaningoflife.data.repository.PaintingRepository
+import com.memoria.meaningoflife.data.repository.TaskRepository
 import com.memoria.meaningoflife.model.Mood
 import com.memoria.meaningoflife.utils.DateUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CalendarViewModel : ViewModel() {
 
     private val paintingRepository = PaintingRepository(MeaningOfLifeApp.instance.database)
     private val diaryRepository = DiaryRepository(MeaningOfLifeApp.instance.database)
+    private val taskRepository = TaskRepository(MeaningOfLifeApp.instance.database)
 
     private val _selectedDayData = MutableLiveData<DayDetailData?>()
     val selectedDayData: LiveData<DayDetailData?> = _selectedDayData
@@ -25,31 +32,94 @@ class CalendarViewModel : ViewModel() {
     private val _diaryMoodsData = MutableLiveData<MutableMap<String, Mood>>()
     val diaryMoodsData: LiveData<MutableMap<String, Mood>> = _diaryMoodsData
 
+    // 抽屉内容
+    private val _drawerTasks = MutableLiveData<List<TaskEntity>>()
+    val drawerTasks: LiveData<List<TaskEntity>> = _drawerTasks
+
+    private val _drawerDiaries = MutableLiveData<List<DiaryEntity>>()
+    val drawerDiaries: LiveData<List<DiaryEntity>> = _drawerDiaries
+
+    private val _drawerPaintings = MutableLiveData<List<WorkEntity>>()
+    val drawerPaintings: LiveData<List<WorkEntity>> = _drawerPaintings
+
     fun loadDayDetail(date: String, mode: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val paintings = paintingRepository.getWorksByDateRange(date, date)
                 val diary = diaryRepository.getDiaryByDate(date)
 
-                _selectedDayData.postValue(
-                    DayDetailData(
-                        date = date,
-                        hasPainting = paintings.isNotEmpty(),
-                        hasDiary = diary != null,
-                        paintingCount = paintings.size,
-                        diaryMood = diary?.mood?.let { Mood.fromValue(it) },
-                        diaryContent = diary?.content?.take(100)
+                withContext(Dispatchers.Main) {
+                    _selectedDayData.postValue(
+                        DayDetailData(
+                            date = date,
+                            hasPainting = paintings.isNotEmpty(),
+                            hasDiary = diary != null,
+                            paintingCount = paintings.size,
+                            diaryMood = diary?.mood?.let { Mood.fromValue(it) },
+                            diaryContent = diary?.content?.take(100)
+                        )
                     )
-                )
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _selectedDayData.postValue(null)
+                withContext(Dispatchers.Main) {
+                    _selectedDayData.postValue(null)
+                }
+            }
+        }
+    }
+
+    fun loadDrawerContent(date: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val parsedDate = DateUtils.parseDate(date)
+                if (parsedDate != null) {
+                    val calendar = java.util.Calendar.getInstance()
+                    calendar.time = parsedDate
+                    calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+                    calendar.set(java.util.Calendar.MINUTE, 0)
+                    calendar.set(java.util.Calendar.SECOND, 0)
+                    calendar.set(java.util.Calendar.MILLISECOND, 0)
+                    val startOfDay = calendar.timeInMillis
+                    val endOfDay = startOfDay + 24 * 60 * 60 * 1000 - 1
+
+                    // 获取已完成的待办任务（completedAt 不为 null 且在当天完成）
+                    val allTasks = taskRepository.getAllTasksSync()
+                    val completedTasks = allTasks.filter {
+                        it.completedAt != null && it.completedAt!! in startOfDay..endOfDay
+                    }
+
+                    // 获取日记
+                    val diary = diaryRepository.getDiaryByDate(date)
+
+                    // 获取绘画记录
+                    val paintings = paintingRepository.getWorksByDateRange(date, date)
+
+                    withContext(Dispatchers.Main) {
+                        _drawerTasks.postValue(completedTasks)
+                        _drawerDiaries.postValue(diary?.let { listOf(it) } ?: emptyList())
+                        _drawerPaintings.postValue(paintings)
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        _drawerTasks.postValue(emptyList())
+                        _drawerDiaries.postValue(emptyList())
+                        _drawerPaintings.postValue(emptyList())
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    _drawerTasks.postValue(emptyList())
+                    _drawerDiaries.postValue(emptyList())
+                    _drawerPaintings.postValue(emptyList())
+                }
             }
         }
     }
 
     fun loadMarkedDates(startDate: String, endDate: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val paintings = paintingRepository.getWorksByDateRange(startDate, endDate)
                 val diaries = diaryRepository.getDiariesByDateRange(startDate, endDate)
@@ -59,7 +129,6 @@ class CalendarViewModel : ViewModel() {
 
                 val result = mutableMapOf<String, CustomCalendarView.MarkData>()
 
-                // 遍历日期范围
                 val start = DateUtils.parseDate(startDate) ?: return@launch
                 val end = DateUtils.parseDate(endDate) ?: return@launch
                 val calendar = java.util.Calendar.getInstance()
@@ -79,7 +148,9 @@ class CalendarViewModel : ViewModel() {
                     calendar.add(java.util.Calendar.DAY_OF_MONTH, 1)
                 }
 
-                _markedDatesData.postValue(result)
+                withContext(Dispatchers.Main) {
+                    _markedDatesData.postValue(result)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -87,7 +158,7 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun loadDiaryMoods(startDate: String, endDate: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val diaries = diaryRepository.getDiariesByDateRange(startDate, endDate)
                 val result = mutableMapOf<String, Mood>()
@@ -96,7 +167,9 @@ class CalendarViewModel : ViewModel() {
                     result[diary.createdDate] = Mood.fromValue(diary.mood)
                 }
 
-                _diaryMoodsData.postValue(result)
+                withContext(Dispatchers.Main) {
+                    _diaryMoodsData.postValue(result)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

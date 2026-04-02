@@ -11,6 +11,7 @@ object DateUtils {
     private val displayFormat = SimpleDateFormat("yyyy年MM月dd日 EEEE", Locale.CHINA)
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val shortDateFormat = SimpleDateFormat("MM月dd日", Locale.getDefault())
+    private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())  // 新增
 
     fun getCurrentDate(): String = dateFormat.format(Date())
 
@@ -23,6 +24,20 @@ object DateUtils {
         } catch (e: Exception) {
             date
         }
+    }
+
+    /**
+     * 格式化时间戳为日期字符串 yyyy-MM-dd
+     */
+    fun formatDate(timestamp: Long): String {
+        return dateFormat.format(Date(timestamp))
+    }
+
+    /**
+     * 格式化时间戳为日期时间字符串 yyyy-MM-dd HH:mm
+     */
+    fun formatDateTime(timestamp: Long): String {
+        return dateTimeFormat.format(Date(timestamp))
     }
 
     fun formatShortDate(date: String): String {

@@ -26,6 +26,8 @@ abstract class BaseActivity : AppCompatActivity() {
             1 -> setTheme(R.style.Theme_MeaningOfLife_Green)
             2 -> setTheme(R.style.Theme_MeaningOfLife_Blue)
             3 -> setTheme(R.style.Theme_MeaningOfLife_Purple)
+            4 -> setTheme(R.style.Theme_MeaningOfLife_Pink)
+            5 -> setTheme(R.style.Theme_MeaningOfLife_Red)
             else -> setTheme(R.style.Theme_MeaningOfLife_Orange)
         }
 
