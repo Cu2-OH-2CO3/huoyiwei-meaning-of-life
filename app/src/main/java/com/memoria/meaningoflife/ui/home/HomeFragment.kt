@@ -3,6 +3,7 @@ package com.memoria.meaningoflife.ui.home
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import java.io.File
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,9 +21,9 @@ import com.memoria.meaningoflife.ui.diary.DiaryActivity
 import com.memoria.meaningoflife.ui.lunch.LunchActivity
 import com.memoria.meaningoflife.ui.painting.PaintingActivity
 import com.memoria.meaningoflife.ui.task.TaskListActivity
+import com.memoria.meaningoflife.ui.timeline.TimelineActivity
 import com.memoria.meaningoflife.utils.BackgroundManager
 import com.memoria.meaningoflife.utils.QuoteManager
-import java.io.File
 
 class HomeFragment : Fragment() {
 
@@ -183,6 +184,7 @@ class HomeFragment : Fragment() {
         )
         Log.d(TAG, "clearBackground: Background cleared")
     }
+
     fun refreshModuleColors() {
         // 重新加载模块数据，触发适配器更新
         viewModel.loadStats()
@@ -199,6 +201,7 @@ class HomeFragment : Fragment() {
                         "diary" -> startActivity(Intent(requireContext(), DiaryActivity::class.java))
                         "lunch" -> startActivity(Intent(requireContext(), LunchActivity::class.java))
                         "task" -> startActivity(Intent(requireContext(), TaskListActivity::class.java))
+                        "timeline" -> startActivity(Intent(requireContext(), TimelineActivity::class.java))
                     }
                 }
             },
@@ -266,6 +269,9 @@ class HomeFragment : Fragment() {
         super.onResume()
         Log.d(TAG, "onResume: Refreshing background")
         setupBackground()
+        if (::moduleAdapter.isInitialized) {
+            viewModel.loadVisibleModules()
+        }
     }
 
     override fun onDestroyView() {

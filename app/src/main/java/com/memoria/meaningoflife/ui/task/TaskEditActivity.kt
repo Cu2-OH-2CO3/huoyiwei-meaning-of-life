@@ -1,19 +1,17 @@
 package com.memoria.meaningoflife.ui.task
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.ViewModelProvider
 import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.data.database.task.TaskEntity
 import com.memoria.meaningoflife.databinding.ActivityTaskEditBinding
+import com.memoria.meaningoflife.ui.BaseActivity
 import com.memoria.meaningoflife.utils.DateUtils
+import com.memoria.meaningoflife.utils.ThemeManager
 import java.util.*
 
-class TaskEditActivity : AppCompatActivity() {
+class TaskEditActivity : BaseActivity() {
 
     private lateinit var binding: ActivityTaskEditBinding
     private lateinit var viewModel: TaskViewModel
@@ -25,6 +23,7 @@ class TaskEditActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ThemeManager.applyTheme(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = if (intent.hasExtra("task_id")) "编辑任务" else "新建任务"
@@ -40,6 +39,9 @@ class TaskEditActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
+        ThemeManager.tintSwitch(binding.switchUrgent)
+        ThemeManager.tintSwitch(binding.switchImportant)
+
         // 紧急程度开关
         binding.switchUrgent.setOnCheckedChangeListener { _, isChecked ->
             binding.tvUrgentValue.text = if (isChecked) "紧急" else "不紧急"

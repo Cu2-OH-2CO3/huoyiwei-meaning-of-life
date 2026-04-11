@@ -14,6 +14,7 @@ import com.memoria.meaningoflife.data.database.task.TaskEntity
 import com.memoria.meaningoflife.data.database.task.TaskPriority
 import com.memoria.meaningoflife.databinding.ItemTaskBinding
 import com.memoria.meaningoflife.utils.DateUtils
+ import com.memoria.meaningoflife.utils.ThemeManager
 
 class TaskAdapter(
     private val onTaskClick: (TaskEntity) -> Unit,
@@ -58,15 +59,15 @@ class TaskAdapter(
             task.deadline?.let { deadline ->
                 val dateStr = DateUtils.formatDate(deadline)
                 val isOverdue = deadline < System.currentTimeMillis() && task.completedAt == null
-                binding.tvDeadline.text = "截止：$dateStr"
+                binding.tvDeadline.text = "DEADLINE  $dateStr"
                 binding.tvDeadline.visibility = View.VISIBLE
                 if (isOverdue) {
                     binding.tvDeadline.setTextColor(
-                        ContextCompat.getColor(binding.root.context, R.color.task_overdue)
+                        ContextCompat.getColor(binding.root.context, R.color.nd_accent)
                     )
                 } else {
                     binding.tvDeadline.setTextColor(
-                        ContextCompat.getColor(binding.root.context, R.color.text_secondary)
+                        ContextCompat.getColor(binding.root.context, R.color.nd_text_secondary)
                     )
                 }
             } ?: run {
@@ -76,15 +77,13 @@ class TaskAdapter(
             // 显示优先级标签
             val priority = task.getPriority()
             val priorityText = when (priority) {
-                TaskPriority.URGENT_IMPORTANT -> "紧急重要"
-                TaskPriority.URGENT_NOT_IMPORTANT -> "紧急不重要"
-                TaskPriority.NOT_URGENT_IMPORTANT -> "不紧急重要"
-                TaskPriority.NOT_URGENT_NOT_IMPORTANT -> "不紧急不重要"
+                TaskPriority.URGENT_IMPORTANT -> "[ PRIORITY: U+I ]"
+                TaskPriority.URGENT_NOT_IMPORTANT -> "[ PRIORITY: U ]"
+                TaskPriority.NOT_URGENT_IMPORTANT -> "[ PRIORITY: I ]"
+                TaskPriority.NOT_URGENT_NOT_IMPORTANT -> "[ PRIORITY: NORMAL ]"
             }
             binding.tvPriority.text = priorityText
-            binding.tvPriority.setTextColor(
-                ContextCompat.getColor(binding.root.context, getPriorityColor(priority))
-            )
+            binding.tvPriority.setTextColor(getPriorityColor(priority, binding.root.context))
 
             binding.checkbox.setOnCheckedChangeListener(null)
             binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
@@ -101,12 +100,12 @@ class TaskAdapter(
         }
     }
 
-    private fun getPriorityColor(priority: TaskPriority): Int {
+    private fun getPriorityColor(priority: TaskPriority, context: android.content.Context): Int {
         return when (priority) {
-            TaskPriority.URGENT_IMPORTANT -> R.color.task_urgent_important
-            TaskPriority.URGENT_NOT_IMPORTANT -> R.color.task_urgent_not_important
-            TaskPriority.NOT_URGENT_IMPORTANT -> R.color.task_not_urgent_important
-            TaskPriority.NOT_URGENT_NOT_IMPORTANT -> R.color.task_not_urgent_not_important
+            TaskPriority.URGENT_IMPORTANT -> ThemeManager.resolvePrimaryColor(context)
+            TaskPriority.URGENT_NOT_IMPORTANT -> ContextCompat.getColor(context, R.color.nd_text_primary)
+            TaskPriority.NOT_URGENT_IMPORTANT -> ContextCompat.getColor(context, R.color.nd_text_secondary)
+            TaskPriority.NOT_URGENT_NOT_IMPORTANT -> ContextCompat.getColor(context, R.color.nd_text_disabled)
         }
     }
 

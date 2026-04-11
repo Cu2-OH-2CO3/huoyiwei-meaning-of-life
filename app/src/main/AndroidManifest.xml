@@ -62,6 +62,17 @@
             android:name=".ui.task.TaskEditActivity"
             android:parentActivityName=".ui.task.TaskListActivity"
             android:theme="@style/Theme.MeaningOfLife" />
+
+        <!-- 时间轴模块 -->
+        <activity
+            android:name=".ui.timeline.TimelineActivity"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/Theme.MeaningOfLife" />
+        <activity android:name=".ui.timeline.schedule.CourseEditActivity" />
+        <activity android:name=".ui.timeline.schedule.SemesterManageActivity" />
+        <activity android:name=".ui.timeline.schedule.IcsImportActivity" />
+        <activity android:name=".ui.timeline.free.EventCreateActivity" />
+
         <!-- FileProvider（用于分享备份文件） -->
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -2,6 +2,7 @@ package com.memoria.meaningoflife.ui.settings
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
@@ -14,12 +15,15 @@ import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.databinding.ActivityBackgroundPreviewBinding
 import com.memoria.meaningoflife.ui.BaseActivity
 import com.memoria.meaningoflife.utils.BackgroundManager
+import com.memoria.meaningoflife.utils.ThemeManager
 import java.io.File
 
 class BackgroundPreviewActivity : BaseActivity() {
 
     private lateinit var binding: ActivityBackgroundPreviewBinding
     private var currentAlpha = 100
+    private var currentCardAlpha = 100
+    private var modulePreviewBaseColor: Int = Color.WHITE
     private var currentImageUri: Uri? = null
     private var currentBitmap: Bitmap? = null
 
@@ -49,6 +53,7 @@ class BackgroundPreviewActivity : BaseActivity() {
 
         setupClickListeners()
         setupSeekBar()
+        setupModuleCardPreview()
         loadCurrentBackground()
     }
 
@@ -81,6 +86,23 @@ class BackgroundPreviewActivity : BaseActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+
+        binding.seekBarCardAlpha.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                currentCardAlpha = progress
+                binding.tvCardAlphaValue.text = "$progress%"
+                updatePreviewCardAlpha(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+    }
+
+    private fun setupModuleCardPreview() {
+        modulePreviewBaseColor = ThemeManager.resolvePrimaryColor(this)
+        binding.cardModulePreview.setCardBackgroundColor(modulePreviewBaseColor)
+        updatePreviewCardAlpha(currentCardAlpha)
     }
 
     private fun loadCurrentBackground() {
@@ -115,6 +137,12 @@ class BackgroundPreviewActivity : BaseActivity() {
             binding.tvAlphaValue.text = "$alpha%"
             Log.d(TAG, "loadCurrentBackground: alpha=$alpha")
         }
+
+        val cardAlpha = BackgroundManager.getCardAlpha()
+        currentCardAlpha = cardAlpha
+        binding.seekBarCardAlpha.progress = cardAlpha
+        binding.tvCardAlphaValue.text = "$cardAlpha%"
+        updatePreviewCardAlpha(cardAlpha)
     }
 
     private fun loadAndPreviewImage(uri: Uri) {
@@ -188,12 +216,35 @@ class BackgroundPreviewActivity : BaseActivity() {
         }
     }
 
+    private fun updatePreviewCardAlpha(alpha: Int) {
+        val alphaInt = (alpha.coerceIn(0, 100) * 255f / 100f).toInt().coerceIn(0, 255)
+        val colorWithAlpha = Color.argb(
+            alphaInt,
+            Color.red(modulePreviewBaseColor),
+            Color.green(modulePreviewBaseColor),
+            Color.blue(modulePreviewBaseColor)
+        )
+        binding.cardModulePreview.setCardBackgroundColor(colorWithAlpha)
+    }
+
     private fun applyBackground() {
         Log.d(TAG, "applyBackground: Start, uri=${currentImageUri}, alpha=$currentAlpha")
 
-        if (currentBitmap == null) {
-            Log.w(TAG, "applyBackground: No image loaded")
-            Toast.makeText(this, "请先选择图片", Toast.LENGTH_SHORT).show()
+        // 无论是否设置背景图，都允许保存卡片透明度偏好，并长期生效。
+        if (currentBitmap == null && currentImageUri == null && !BackgroundManager.isBackgroundEnabled()) {
+            BackgroundManager.setCardAlpha(currentCardAlpha)
+            BackgroundManager.setBackgroundAlpha(currentAlpha)
+            Toast.makeText(this, "卡片透明度已保存", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        // 未重新选图时，允许仅应用透明度调节。
+        if (currentImageUri == null && BackgroundManager.isBackgroundEnabled()) {
+            BackgroundManager.setBackgroundAlpha(currentAlpha)
+            BackgroundManager.setCardAlpha(currentCardAlpha)
+            Toast.makeText(this, "透明度已保存", Toast.LENGTH_SHORT).show()
+            finish()
             return
         }
 
@@ -208,6 +259,7 @@ class BackgroundPreviewActivity : BaseActivity() {
 
         if (success) {
             BackgroundManager.setBackgroundAlpha(currentAlpha)
+            BackgroundManager.setCardAlpha(currentCardAlpha)
             Log.d(TAG, "applyBackground: Alpha saved=$currentAlpha")
 
             Toast.makeText(this, "背景已保存", Toast.LENGTH_SHORT).show()

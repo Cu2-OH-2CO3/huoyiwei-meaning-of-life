@@ -2,14 +2,17 @@ package com.memoria.meaningoflife.ui
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.TypedValue
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.databinding.ActivityMainBinding
 import com.memoria.meaningoflife.ui.home.HomeFragment
+import com.memoria.meaningoflife.utils.AutoBackupManager
 import com.memoria.meaningoflife.utils.LogManager
+import com.memoria.meaningoflife.utils.PreferenceManager
+import com.memoria.meaningoflife.utils.ThemeManager
 
 class MainActivity : BaseActivity() {
 
@@ -47,12 +50,22 @@ class MainActivity : BaseActivity() {
         setupViewPager()
         setupBottomNavigation()
         applyThemeColors()
+
+        // 标记首次启动完成
+        if (PreferenceManager.isFirstLaunch(this)) {
+            PreferenceManager.setFirstLaunchCompleted(this)
+        }
+
+        // 执行自动备份（在后台线程，不阻塞 UI）
+        AutoBackupManager.performQuickBackup(this) { success, path ->
+            if (success) {
+                Log.d("MainActivity", "自动备份完成: $path")
+            }
+        }
     }
 
     private fun applyThemeColors() {
-        val typedValue = TypedValue()
-        theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true)
-        val primaryColor = typedValue.data
+        val primaryColor = ThemeManager.resolvePrimaryColor(this)
 
         window.statusBarColor = primaryColor
         window.navigationBarColor = primaryColor

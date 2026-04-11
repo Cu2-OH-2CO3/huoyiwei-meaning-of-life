@@ -5,20 +5,23 @@
         <item name="colorPrimary">#FF8C42</item>
         <item name="colorPrimaryVariant">#E67E22</item>
         <item name="colorSecondary">#FF8C42</item>
+        <item name="colorSecondaryVariant">#E67E22</item>
         <item name="android:windowBackground">@color/background_dark</item>
     </style>
 
     <style name="Theme.MeaningOfLife.Green" parent="Theme.MeaningOfLife">
-        <item name="colorPrimary">#4CAF50</item>
-        <item name="colorPrimaryVariant">#388E3C</item>
-        <item name="colorSecondary">#4CAF50</item>
+        <item name="colorPrimary">#1C8D6C</item>
+        <item name="colorPrimaryVariant">#007D75</item>
+        <item name="colorSecondary">#1C8D6C</item>
+        <item name="colorSecondaryVariant">#007D75</item>
         <item name="android:windowBackground">@color/background_dark</item>
     </style>
 
     <style name="Theme.MeaningOfLife.Blue" parent="Theme.MeaningOfLife">
-        <item name="colorPrimary">#2196F3</item>
-        <item name="colorPrimaryVariant">#1976D2</item>
-        <item name="colorSecondary">#2196F3</item>
+        <item name="colorPrimary">#6192D3</item>
+        <item name="colorPrimaryVariant">#3966D2</item>
+        <item name="colorSecondary">#6192D3</item>
+        <item name="colorSecondaryVariant">#3966D2</item>
         <item name="android:windowBackground">@color/background_dark</item>
     </style>
 
@@ -26,6 +29,24 @@
         <item name="colorPrimary">#9C27B0</item>
         <item name="colorPrimaryVariant">#7B1FA2</item>
         <item name="colorSecondary">#9C27B0</item>
+        <item name="colorSecondaryVariant">#7B1FA2</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+    </style>
+
+    <style name="Theme.MeaningOfLife.Pink" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#FFB3C6</item>
+        <item name="colorPrimaryVariant">#FF8FAB</item>
+        <item name="colorSecondary">#FFB3C6</item>
+        <item name="colorSecondaryVariant">#FF8FAB</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+    </style>
+
+    <!-- 红色主题 -->
+    <style name="Theme.MeaningOfLife.Red" parent="Theme.MeaningOfLife">
+        <item name="colorPrimary">#810100</item>
+        <item name="colorPrimaryVariant">#630000</item>
+        <item name="colorSecondary">#810100</item>
+        <item name="colorSecondaryVariant">#630000</item>
         <item name="android:windowBackground">@color/background_dark</item>
     </style>
 </resources>

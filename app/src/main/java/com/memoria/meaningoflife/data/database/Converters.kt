@@ -3,6 +3,8 @@ package com.memoria.meaningoflife.data.database
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.memoria.meaningoflife.data.database.timeline.EventType
+import com.memoria.meaningoflife.data.database.timeline.SourceMode
 
 class Converters {
 
@@ -33,4 +35,17 @@ class Converters {
             gson.fromJson(it, type)
         }
     }
+    // ==================== 时间轴模块转换器 ====================
+
+    @TypeConverter
+    fun fromEventType(value: EventType): String = value.name
+
+    @TypeConverter
+    fun toEventType(value: String): EventType = EventType.valueOf(value)
+
+    @TypeConverter
+    fun fromSourceMode(value: SourceMode): String = value.name
+
+    @TypeConverter
+    fun toSourceMode(value: String): SourceMode = SourceMode.valueOf(value)
 }

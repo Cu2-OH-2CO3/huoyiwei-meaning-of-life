@@ -1,6 +1,7 @@
 package com.memoria.meaningoflife.ui.task
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
@@ -16,13 +17,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.data.database.task.TaskEntity
 import com.memoria.meaningoflife.data.database.task.TaskPriority
 import com.memoria.meaningoflife.databinding.FragmentTaskListBinding
+import com.memoria.meaningoflife.ui.timeline.free.EventCreateActivity
 import com.memoria.meaningoflife.utils.DateUtils
+import com.memoria.meaningoflife.utils.ThemeManager
+import java.util.Calendar
 
 class TaskListFragment : Fragment() {
 
@@ -31,14 +34,16 @@ class TaskListFragment : Fragment() {
 
     private lateinit var viewModel: TaskViewModel
     private lateinit var taskAdapter: TaskAdapter
+    private var pageFab: FloatingActionButton? = null
     private var customTypeface: Typeface? = null
     private var currentFilter = FilterType.ALL
+    private var latestTasks: List<TaskEntity> = emptyList()
 
     enum class FilterType {
         ALL, ACTIVE, COMPLETED, URGENT_IMPORTANT
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentTaskListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -49,12 +54,14 @@ class TaskListFragment : Fragment() {
         // 加载字体
         try {
             customTypeface = ResourcesCompat.getFont(requireContext(), R.font.lxgw)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             customTypeface = null
         }
 
         // 设置标题字体
         binding.tvTitle.typeface = customTypeface
+        binding.toolbarTask.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.nd_surface))
+        binding.tvTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.nd_text_display))
 
         viewModel = ViewModelProvider(this)[TaskViewModel::class.java]
 
@@ -86,33 +93,60 @@ class TaskListFragment : Fragment() {
     }
 
     private fun setupFilterChips() {
+        val borderVisible = ContextCompat.getColor(requireContext(), R.color.nd_border_visible)
+        val textSecondary = ContextCompat.getColor(requireContext(), R.color.nd_text_secondary)
+        val textDisplay = ContextCompat.getColor(requireContext(), R.color.nd_text_display)
+        val bgSurface = ContextCompat.getColor(requireContext(), R.color.nd_surface)
+
+        val strokeStates = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(textDisplay, borderVisible)
+        )
+        val textStates = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(bgSurface, textSecondary)
+        )
+        val bgStates = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(textDisplay, Color.TRANSPARENT)
+        )
+
         // 创建筛选 Chip
         val chipAll = Chip(requireContext()).apply {
             text = "全部"
             isCheckable = true
             tag = FilterType.ALL
-            customTypeface?.let { typeface = it }
+            typeface = Typeface.MONOSPACE
         }
         val chipActive = Chip(requireContext()).apply {
             text = "未完成"
             isCheckable = true
             tag = FilterType.ACTIVE
-            customTypeface?.let { typeface = it }
+            typeface = Typeface.MONOSPACE
         }
         val chipCompleted = Chip(requireContext()).apply {
             text = "已完成"
             isCheckable = true
             tag = FilterType.COMPLETED
-            customTypeface?.let { typeface = it }
+            typeface = Typeface.MONOSPACE
         }
         val chipUrgent = Chip(requireContext()).apply {
             text = "紧急重要"
             isCheckable = true
             tag = FilterType.URGENT_IMPORTANT
-            customTypeface?.let { typeface = it }
-            setChipBackgroundColor(ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), R.color.task_urgent_important)
-            ))
+            typeface = Typeface.MONOSPACE
+        }
+
+        val chips = listOf(chipAll, chipActive, chipCompleted, chipUrgent)
+        chips.forEach { chip ->
+            chip.textSize = 11f
+            chip.isAllCaps = true
+            chip.chipStrokeWidth = 1f
+            chip.chipStrokeColor = strokeStates
+            chip.chipBackgroundColor = bgStates
+            chip.setTextColor(textStates)
+            chip.rippleColor = ColorStateList.valueOf(Color.TRANSPARENT)
+            chip.setEnsureMinTouchTargetSize(false)
         }
 
         binding.chipGroup.addView(chipAll)
@@ -121,19 +155,20 @@ class TaskListFragment : Fragment() {
         binding.chipGroup.addView(chipUrgent)
         chipAll.isChecked = true
 
+        @Suppress("DEPRECATION")
         binding.chipGroup.setOnCheckedChangeListener { _, checkedId ->
             val checkedChip = binding.chipGroup.findViewById<Chip>(checkedId)
             currentFilter = checkedChip?.tag as? FilterType ?: FilterType.ALL
-            taskAdapter.setFilter(currentFilter)
+            applyFilterAndRender()
         }
     }
 
     private fun setupFab() {
+        pageFab?.let { (it.parent as? ViewGroup)?.removeView(it) }
+
         val fab = FloatingActionButton(requireContext()).apply {
             setImageResource(android.R.drawable.ic_input_add)
-            setBackgroundTintList(ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), R.color.primary)
-            ))
+            ThemeManager.tintFab(this)
             setOnClickListener {
                 val intent = android.content.Intent(requireContext(), TaskEditActivity::class.java)
                 startActivity(intent)
@@ -152,6 +187,7 @@ class TaskListFragment : Fragment() {
         // 将 FAB 添加到根视图
         val rootView = requireView() as? ViewGroup
         rootView?.addView(fab)
+        pageFab = fab
     }
 
     private fun showTaskDetailDialog(task: TaskEntity) {
@@ -164,6 +200,7 @@ class TaskListFragment : Fragment() {
         val tvDeadline = dialogView.findViewById<TextView>(R.id.tv_deadline)
         val tvDescription = dialogView.findViewById<TextView>(R.id.tv_description)
         val btnEdit = dialogView.findViewById<View>(R.id.btn_edit)
+        val btnAddToTimeline = dialogView.findViewById<View>(R.id.btn_add_to_timeline)
         val btnDelete = dialogView.findViewById<View>(R.id.btn_delete)
 
         tvTitle.text = task.title
@@ -183,28 +220,67 @@ class TaskListFragment : Fragment() {
 
         tvDescription.text = task.description ?: "无描述"
 
+        val dialog = builder.setView(dialogView)
+            .setNegativeButton("关闭", null)
+            .create()
+
         btnEdit.setOnClickListener {
             val intent = android.content.Intent(requireContext(), TaskEditActivity::class.java)
             intent.putExtra("task_id", task.id)
             startActivity(intent)
-            (dialogView.parent as? android.app.Dialog)?.dismiss()
+            dialog.dismiss()
+        }
+
+        btnAddToTimeline.setOnClickListener {
+            openCreateTimelineBlock(task)
+            dialog.dismiss()
         }
 
         btnDelete.setOnClickListener {
-            AlertDialog.Builder(requireContext())
+            val deleteDialog = AlertDialog.Builder(requireContext())
                 .setTitle("删除任务")
                 .setMessage("确定要删除这个任务吗？")
                 .setPositiveButton("删除") { _, _ ->
                     viewModel.deleteTask(task)
-                    (dialogView.parent as? android.app.Dialog)?.dismiss()
+                    dialog.dismiss()
                 }
                 .setNegativeButton("取消", null)
                 .show()
+            tintDialogButtons(deleteDialog)
         }
 
-        builder.setView(dialogView)
-            .setNegativeButton("关闭", null)
-            .show()
+        dialog.show()
+        tintDialogButtons(dialog)
+    }
+
+    private fun openCreateTimelineBlock(task: TaskEntity) {
+        val now = System.currentTimeMillis()
+        val startAt = task.deadline?.let { it - 60 * 60 * 1000L }?.coerceAtLeast(now) ?: now
+        val endAt = startAt + 60 * 60 * 1000L
+
+        val roundedStart = roundToFiveMinutes(startAt)
+        val roundedEnd = roundToFiveMinutes(endAt)
+
+        val intent = android.content.Intent(requireContext(), EventCreateActivity::class.java).apply {
+            putExtra("prefill_title", task.title)
+            putExtra("prefill_description", task.description)
+            putExtra("prefill_event_type", "TASK")
+            putExtra("prefill_start_at", roundedStart)
+            putExtra("prefill_end_at", roundedEnd)
+            putExtra("prefill_source_id", task.id)
+            putExtra("prefill_source_table", "tasks")
+        }
+        startActivity(intent)
+    }
+
+    private fun roundToFiveMinutes(timeMillis: Long): Long {
+        val calendar = Calendar.getInstance().apply { timeInMillis = timeMillis }
+        val minute = calendar.get(Calendar.MINUTE)
+        val roundedMinute = (minute / 5) * 5
+        calendar.set(Calendar.MINUTE, roundedMinute)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
     }
 
     private fun showTaskOptionsDialog(task: TaskEntity) {
@@ -215,7 +291,7 @@ class TaskListFragment : Fragment() {
         options.add("编辑")
         options.add("删除")
 
-        AlertDialog.Builder(requireContext())
+        val optionsDialog = AlertDialog.Builder(requireContext())
             .setTitle(task.title)
             .setItems(options.toTypedArray()) { _, which ->
                 when (options[which]) {
@@ -226,7 +302,7 @@ class TaskListFragment : Fragment() {
                         startActivity(intent)
                     }
                     "删除" -> {
-                        AlertDialog.Builder(requireContext())
+                        val deleteDialog = AlertDialog.Builder(requireContext())
                             .setTitle("删除任务")
                             .setMessage("确定要删除这个任务吗？")
                             .setPositiveButton("删除") { _, _ ->
@@ -234,35 +310,50 @@ class TaskListFragment : Fragment() {
                             }
                             .setNegativeButton("取消", null)
                             .show()
+                        tintDialogButtons(deleteDialog)
                     }
                 }
             }
             .setNegativeButton("取消", null)
             .show()
+        tintDialogButtons(optionsDialog)
     }
 
     private fun getPriorityColor(priority: TaskPriority): Int {
         return when (priority) {
-            TaskPriority.URGENT_IMPORTANT -> R.color.task_urgent_important
-            TaskPriority.URGENT_NOT_IMPORTANT -> R.color.task_urgent_not_important
-            TaskPriority.NOT_URGENT_IMPORTANT -> R.color.task_not_urgent_important
-            TaskPriority.NOT_URGENT_NOT_IMPORTANT -> R.color.task_not_urgent_not_important
+            TaskPriority.URGENT_IMPORTANT -> R.color.nd_accent
+            TaskPriority.URGENT_NOT_IMPORTANT -> R.color.nd_text_primary
+            TaskPriority.NOT_URGENT_IMPORTANT -> R.color.nd_text_display
+            TaskPriority.NOT_URGENT_NOT_IMPORTANT -> R.color.nd_text_secondary
         }
+    }
+
+    private fun tintDialogButtons(dialog: AlertDialog) {
+        val primary = ThemeManager.resolvePrimaryColor(requireContext())
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(primary)
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(primary)
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setTextColor(primary)
     }
 
     private fun observeData() {
         viewModel.allTasks.observe(viewLifecycleOwner) { tasks ->
-            val filteredTasks = when (currentFilter) {
-                FilterType.ACTIVE -> tasks.filter { it.completedAt == null }
-                FilterType.COMPLETED -> tasks.filter { it.completedAt != null }
-                FilterType.URGENT_IMPORTANT -> tasks.filter { it.isUrgent && it.isImportant && it.completedAt == null }
-                else -> tasks
-            }
-            taskAdapter.submitList(filteredTasks)
+            latestTasks = tasks
+            applyFilterAndRender()
         }
     }
 
+    private fun applyFilterAndRender() {
+        val filteredTasks = when (currentFilter) {
+            FilterType.ACTIVE -> latestTasks.filter { it.completedAt == null }
+            FilterType.COMPLETED -> latestTasks.filter { it.completedAt != null }
+            FilterType.URGENT_IMPORTANT -> latestTasks.filter { it.isUrgent && it.isImportant && it.completedAt == null }
+            else -> latestTasks
+        }
+        taskAdapter.submitList(filteredTasks)
+    }
+
     override fun onDestroyView() {
+        pageFab = null
         super.onDestroyView()
         _binding = null
     }

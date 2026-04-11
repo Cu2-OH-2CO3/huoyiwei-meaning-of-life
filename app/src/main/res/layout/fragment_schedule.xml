@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nd_black">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/nd_surface"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/btn_prev_week"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/schedule_prev_week"
+                android:src="@android:drawable/ic_media_previous"
+                app:tint="@color/nd_text_secondary" />
+
+            <TextView
+                android:id="@+id/tv_week_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:letterSpacing="0.05"
+                android:text="@string/schedule_week_default"
+                android:textColor="@color/nd_text_display"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btn_next_week"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/schedule_next_week"
+                android:src="@android:drawable/ic_media_next"
+                app:tint="@color/nd_text_secondary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/nd_surface"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.06"
+                android:text="@string/schedule_show_non_course_events"
+                android:textAllCaps="true"
+                android:textColor="@color/nd_text_secondary"
+                android:textSize="11sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_show_non_course_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/schedule_show_non_course_events" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_date_row"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/nd_surface"
+            android:orientation="horizontal"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
+
+            <TextView
+                android:id="@+id/tv_month_label"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:text="4月"
+                android:textColor="@color/nd_text_secondary"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_day_name_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="周一"
+                    android:textColor="@color/nd_text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_day_date_1"
+                    android:layout_width="28dp"
+                    android:layout_height="18dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@color/nd_text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_day_name_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="周二"
+                    android:textColor="@color/nd_text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_day_date_2"
+                    android:layout_width="28dp"
+                    android:layout_height="18dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="2"
+                    android:textColor="@color/nd_text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_day_name_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="周三"
+                    android:textColor="@color/nd_text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_day_date_3"
+                    android:layout_width="28dp"
+                    android:layout_height="18dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="@color/nd_text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_day_name_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="周四"
+                    android:textColor="@color/nd_text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_day_date_4"
+                    android:layout_width="28dp"
+                    android:layout_height="18dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="4"
+                    android:textColor="@color/nd_text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_day_name_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="周五"
+                    android:textColor="@color/nd_text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_day_date_5"
+                    android:layout_width="28dp"
+                    android:layout_height="18dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="5"
+                    android:textColor="@color/nd_text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_day_name_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="周六"
+                    android:textColor="@color/nd_text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_day_date_6"
+                    android:layout_width="28dp"
+                    android:layout_height="18dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="6"
+                    android:textColor="@color/nd_text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_day_name_7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="周日"
+                    android:textColor="@color/nd_text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_day_date_7"
+                    android:layout_width="28dp"
+                    android:layout_height="18dp"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:text="7"
+                    android:textColor="@color/nd_text_primary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/schedule_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:overScrollMode="ifContentScrolls">
+
+            <com.memoria.meaningoflife.ui.timeline.schedule.ScheduleWeekView
+                android:id="@+id/schedule_week_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="1400dp" />
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_course"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="18dp"
+        android:layout_marginBottom="18dp"
+        android:contentDescription="@string/schedule_add_course_desc"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/nd_text_display"
+        app:tint="@color/nd_black" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_import_ics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="18dp"
+        android:layout_marginBottom="90dp"
+        android:contentDescription="@string/schedule_import_ics_desc"
+        android:src="@android:drawable/ic_menu_upload"
+        app:backgroundTint="@color/nd_surface_raised"
+        app:borderWidth="1dp"
+        app:tint="@color/nd_text_primary" />
+
+</FrameLayout>

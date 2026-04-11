@@ -1,6 +1,9 @@
 package com.memoria.meaningoflife.ui.settings
 
 import android.content.Intent
+import androidx.appcompat.widget.SwitchCompat
+import com.memoria.meaningoflife.utils.AutoBackupManager
+import com.memoria.meaningoflife.utils.PreferenceManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,11 +16,12 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +35,7 @@ import com.memoria.meaningoflife.utils.CardColorManager
 import com.memoria.meaningoflife.utils.DataExporter
 import com.memoria.meaningoflife.utils.FileUtils
 import com.memoria.meaningoflife.utils.QuoteManager
+import com.memoria.meaningoflife.utils.ThemeManager
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -81,6 +86,8 @@ class SettingsFragment : Fragment() {
         Log.d(TAG, "onViewCreated: themePosition=$previousThemePosition, darkMode=$previousDarkModeState")
 
         setupClickListeners()
+        setupAutoBackupSwitch()
+        ThemeManager.tintSwitch(binding.switchDarkMode)
         setupQuoteRecyclerView()
         loadData()
         loadQuotes()
@@ -88,6 +95,56 @@ class SettingsFragment : Fragment() {
         binding.btnAddQuote.setTextColor(primaryColor)
         binding.switchDarkMode.isChecked = previousDarkModeState
     }
+
+    private fun setupAutoBackupSwitch() {
+        val switchAutoBackup = binding.root.findViewById<SwitchCompat>(R.id.switch_auto_backup)
+        val tvBackupInfo = binding.root.findViewById<TextView>(R.id.tv_backup_info)
+        val layoutBackupInfo = binding.root.findViewById<View>(R.id.layout_backup_info)
+
+        ThemeManager.tintSwitch(switchAutoBackup)
+        switchAutoBackup.isChecked = PreferenceManager.isAutoBackupEnabled(requireContext())
+        updateBackupInfo(tvBackupInfo)
+
+        switchAutoBackup.setOnCheckedChangeListener { _, isChecked ->
+            PreferenceManager.setAutoBackupEnabled(requireContext(), isChecked)
+
+            if (isChecked) {
+                AutoBackupManager.performQuickBackup(requireContext(), force = true) { success, _ ->
+                    if (success) {
+                        Toast.makeText(requireContext(), "自动备份已开启，已生成快速备份", Toast.LENGTH_SHORT).show()
+                        updateBackupInfo(tvBackupInfo)
+                    } else {
+                        Toast.makeText(requireContext(), "备份失败，请检查存储权限", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                Toast.makeText(requireContext(), "自动备份已关闭", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        layoutBackupInfo.setOnClickListener {
+            val (exists, info) = AutoBackupManager.getQuickBackupFileInfo(requireContext())
+            if (exists) {
+                Toast.makeText(requireContext(), info, Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(requireContext(), "暂无快速备份文件", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun updateBackupInfo(tvBackupInfo: TextView) {
+        val (exists, info) = AutoBackupManager.getQuickBackupFileInfo(requireContext())
+        tvBackupInfo.text = info
+        tvBackupInfo.visibility = if (exists) View.VISIBLE else View.GONE
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val tvBackupInfo = binding.root.findViewById<TextView>(R.id.tv_backup_info)
+        updateBackupInfo(tvBackupInfo)
+    }
+
+
 
     /**
      * 检查存储权限（Android 11+ 需要 MANAGE_EXTERNAL_STORAGE）
@@ -111,9 +168,9 @@ class SettingsFragment : Fragment() {
                 .setPositiveButton("去授权") { _, _ ->
                     try {
                         val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                        intent.data = Uri.parse("package:${requireContext().packageName}")
+                        intent.data = "package:${requireContext().packageName}".toUri()
                         startActivity(intent)
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         // 如果上述方式失败，跳转到设置页面
                         val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
                         startActivity(intent)
@@ -382,7 +439,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun loadData() {
-        binding.tvVersion.text = "版本号 ${viewModel.getVersionName()}"
+        binding.tvVersion.text = getString(R.string.settings_version_text, viewModel.getVersionName())
 
         binding.tvVersion.setOnClickListener {
             val currentTime = System.currentTimeMillis()

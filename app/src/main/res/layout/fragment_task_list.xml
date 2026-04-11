@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="@color/nd_black">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,10 +12,24 @@
 
         <!-- 标题栏 -->
         <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_task"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp">
+            android:background="@color/nd_surface"
+            android:elevation="0dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="TASKS"
+                android:textAllCaps="true"
+                android:textColor="@color/nd_text_secondary"
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/tv_title"
@@ -23,18 +37,27 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="待办任务"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textColor="@color/nd_text_display"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
 
         </androidx.appcompat.widget.Toolbar>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/nd_border_visible" />
 
         <!-- 筛选 Chip Group -->
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="8dp"
             app:chipSpacing="8dp"
             app:singleSelection="true" />
 
@@ -43,7 +66,11 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp" />
+            android:clipToPadding="false"
+            android:paddingStart="12dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="96dp" />
 
     </LinearLayout>
 

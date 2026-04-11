@@ -21,6 +21,7 @@ class MeaningOfLifeApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        LogManager.init(this)
         database = AppDatabase.getInstance(this)
 
         // 检查并标记即将到期的任务

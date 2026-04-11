@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="@color/nd_black">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,21 +11,43 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.08"
+            android:text="TASK EDITOR"
+            android:textAllCaps="true"
+            android:textColor="@color/nd_text_secondary"
+            android:textSize="11sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/nd_border_visible" />
+
         <!-- 标题 -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:hint="任务标题"
             app:counterEnabled="true"
             app:counterMaxLength="50"
-            app:hintEnabled="true">
+            app:hintEnabled="true"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/nd_border_visible"
+            app:hintTextColor="@color/nd_text_secondary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="任务标题"
                 android:maxLines="1"
+                android:textColor="@color/nd_text_display"
+                android:textColorHint="@color/nd_text_secondary"
                 android:maxLength="50" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -36,8 +58,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="紧急程度"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:fontFamily="monospace"
+            android:letterSpacing="0.08"
+            android:textAllCaps="true"
+            android:textColor="@color/nd_text_secondary"
+            android:textSize="11sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,6 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="不紧急"
+                android:textColor="@color/nd_text_primary"
                 android:textSize="14sp" />
 
             <androidx.appcompat.widget.SwitchCompat
@@ -64,6 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="不紧急"
+                android:textColor="@color/nd_text_display"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -74,8 +101,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="重要程度"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:fontFamily="monospace"
+            android:letterSpacing="0.08"
+            android:textAllCaps="true"
+            android:textColor="@color/nd_text_secondary"
+            android:textSize="11sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -88,6 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="不重要"
+                android:textColor="@color/nd_text_primary"
                 android:textSize="14sp" />
 
             <androidx.appcompat.widget.SwitchCompat
@@ -102,6 +133,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="不重要"
+                android:textColor="@color/nd_text_display"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -112,8 +144,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="截止日期"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:fontFamily="monospace"
+            android:letterSpacing="0.08"
+            android:textAllCaps="true"
+            android:textColor="@color/nd_text_secondary"
+            android:textSize="11sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -128,6 +163,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="未设置"
+                android:textColor="@color/nd_text_display"
                 android:textSize="14sp" />
 
             <Button
@@ -137,6 +173,7 @@
                 android:layout_height="48dp"
                 android:minWidth="80dp"
                 android:text="选择"
+                android:textColor="@color/nd_text_display"
                 android:textSize="14sp" />
 
             <Button
@@ -147,6 +184,7 @@
                 android:minWidth="80dp"
                 android:layout_marginStart="8dp"
                 android:text="清除"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -156,14 +194,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:hintEnabled="true">
+            android:hint="任务描述"
+            app:hintEnabled="true"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/nd_border_visible"
+            app:hintTextColor="@color/nd_text_secondary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_description"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:gravity="top"
-                android:hint="任务描述"
+                android:textColor="@color/nd_text_primary"
+                android:textColorHint="@color/nd_text_secondary"
                 android:maxLines="5" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -174,7 +217,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:backgroundTint="?attr/colorPrimary"
             android:text="保存"
+            android:textAllCaps="true"
+            android:textColor="?attr/colorOnPrimary"
             android:textSize="16sp" />
 
     </LinearLayout>

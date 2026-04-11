@@ -50,11 +50,22 @@ class HomeViewModel : ViewModel() {
             statsText = "加载中...",
             color = android.graphics.Color.parseColor("#9C27B0"),
             badgeCount = 0
+        ),
+        // 新增时间轴模块
+        HomeModule(
+            id = "timeline",
+            title = "时间轴",
+            iconRes = R.drawable.ic_timeline_module,
+            statsText = "加载中...",
+            color = android.graphics.Color.parseColor("#7C3AED"),
+            badgeCount = 0
         )
     )
 
+
     private val _visibleModules = MutableLiveData<List<HomeModule>>()
     val visibleModules: LiveData<List<HomeModule>> = _visibleModules
+    private var latestUrgentTaskCount: Int = 0
 
     init {
         loadStats()
@@ -64,6 +75,8 @@ class HomeViewModel : ViewModel() {
 
     private fun observeTaskCount() {
         viewModelScope.launch {
+            // 先补齐临近截止任务的紧急标记，避免首页第一次渲染读到旧计数。
+            taskRepository.markTasksAsUrgent()
             taskRepository.getUrgentImportantCount().collect { count ->
                 updateTaskModuleStats(count)
             }
@@ -71,7 +84,8 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun updateTaskModuleStats(urgentCount: Int) {
-        val currentModules = _visibleModules.value ?: return
+        latestUrgentTaskCount = urgentCount
+        val currentModules = _visibleModules.value ?: filterVisibleModules(allModules)
         val statsText = if (urgentCount > 0) {
             "你有 $urgentCount 项未完成的紧急任务"
         } else {
@@ -93,9 +107,22 @@ class HomeViewModel : ViewModel() {
 
     // 改为 public，供外部调用
     fun loadVisibleModules() {
-        val hiddenIds = prefs.getStringSet("hidden_modules", emptySet()) ?: emptySet()
-        val visible = allModules.filter { it.id !in hiddenIds }
-        _visibleModules.postValue(visible)
+        val baseModules = _visibleModules.value ?: allModules
+        val visible = filterVisibleModules(baseModules).map { module ->
+            if (module.id == "task") {
+                module.copy(
+                    badgeCount = latestUrgentTaskCount,
+                    statsText = if (latestUrgentTaskCount > 0) {
+                        "你有 $latestUrgentTaskCount 项未完成的紧急任务"
+                    } else {
+                        "暂无紧急任务"
+                    }
+                )
+            } else {
+                module
+            }
+        }
+        _visibleModules.value = visible
     }
 
     fun hideModule(moduleId: String) {
@@ -143,12 +170,23 @@ class HomeViewModel : ViewModel() {
 
             // 获取待办统计
             val urgentCount = try {
+                taskRepository.markTasksAsUrgent()
                 taskRepository.getUrgentImportantCountSync()
             } catch (e: Exception) {
                 0
             }
 
+            // 获取时间轴统计（今日事件数）
+            val todayEventCount = try {
+                // 这里可以调用时间轴仓库获取今日事件数
+                // 暂时先设为0，等时间轴仓库实现后可以获取真实数据
+                0
+            } catch (e: Exception) {
+                0
+            }
+
             // 更新所有模块的统计文本
+            latestUrgentTaskCount = urgentCount
             val updatedModules = allModules.map { module ->
                 when (module.id) {
                     "painting" -> module.copy(statsText = "今日练习: ${DateUtils.formatDuration(todayDuration)}\n本月作品: ${monthWorkCount}幅")
@@ -158,15 +196,23 @@ class HomeViewModel : ViewModel() {
                         statsText = if (urgentCount > 0) "你有 $urgentCount 项未完成的紧急任务" else "暂无紧急任务",
                         badgeCount = urgentCount
                     )
+                    "timeline" -> module.copy(
+                        statsText = if (todayEventCount > 0) "今日 ${todayEventCount} 个事件" else "暂无事件",
+                        badgeCount = 0
+                    )
                     else -> module
                 }
             }
 
             // 更新可见模块
-            val hiddenIds = prefs.getStringSet("hidden_modules", emptySet()) ?: emptySet()
-            val visible = updatedModules.filter { it.id !in hiddenIds }
+            val visible = filterVisibleModules(updatedModules)
             _visibleModules.postValue(visible)
         }
+    }
+
+    private fun filterVisibleModules(modules: List<HomeModule>): List<HomeModule> {
+        val hiddenIds = prefs.getStringSet("hidden_modules", emptySet()) ?: emptySet()
+        return modules.filter { it.id !in hiddenIds }
     }
 
     // 刷新模块数据

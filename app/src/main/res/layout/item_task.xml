@@ -1,58 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    android:orientation="vertical"
+    android:background="@color/nd_surface"
+    android:layout_marginBottom="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingStart="12dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="12dp">
 
         <CheckBox
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="top"
+            android:buttonTint="@color/nd_text_display" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="10dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/nd_text_display"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:maxLines="2" />
 
             <TextView
                 android:id="@+id/tv_deadline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="12sp"
+                android:layout_marginTop="6dp"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.05"
+                android:textColor="@color/nd_text_secondary"
+                android:textSize="11sp"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_priority"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/bg_priority_tag"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:textSize="10sp" />
+                android:layout_marginTop="8dp"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.06"
+                android:textAllCaps="true"
+                android:textColor="@color/nd_text_secondary"
+                android:textSize="11sp" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/nd_border" />
+
+</LinearLayout>

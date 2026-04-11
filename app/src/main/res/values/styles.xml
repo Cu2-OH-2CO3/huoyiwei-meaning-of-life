@@ -19,18 +19,24 @@
     <style name="Theme.MeaningOfLife.Orange" parent="Theme.MeaningOfLife">
         <item name="colorPrimary">#FF8B4D</item>
         <item name="colorPrimaryVariant">#FF6E20</item>
+        <item name="colorSecondary">#FF8B4D</item>
+        <item name="colorSecondaryVariant">#FF6E20</item>
     </style>
 
     <!-- 绿色主题 -->
     <style name="Theme.MeaningOfLife.Green" parent="Theme.MeaningOfLife">
         <item name="colorPrimary">#1C8D6C</item>
         <item name="colorPrimaryVariant">#007D75</item>
+        <item name="colorSecondary">#1C8D6C</item>
+        <item name="colorSecondaryVariant">#007D75</item>
     </style>
 
     <!-- 蓝色主题 -->
     <style name="Theme.MeaningOfLife.Blue" parent="Theme.MeaningOfLife">
         <item name="colorPrimary">#6192D3</item>
         <item name="colorPrimaryVariant">#3966D2</item>
+        <item name="colorSecondary">#6192D3</item>
+        <item name="colorSecondaryVariant">#3966D2</item>
     </style>
 
 
@@ -38,18 +44,24 @@
     <style name="Theme.MeaningOfLife.Purple" parent="Theme.MeaningOfLife">
         <item name="colorPrimary">#8B77B8</item>
         <item name="colorPrimaryVariant">#644B86</item>
+        <item name="colorSecondary">#8B77B8</item>
+        <item name="colorSecondaryVariant">#644B86</item>
     </style>
 
     <!-- 粉色主题 -->
     <style name="Theme.MeaningOfLife.Pink" parent="Theme.MeaningOfLife">
         <item name="colorPrimary">#FFB3C6</item>
         <item name="colorPrimaryVariant">#FF8FAB</item>
+        <item name="colorSecondary">#FFB3C6</item>
+        <item name="colorSecondaryVariant">#FF8FAB</item>
     </style>
 
     <!-- 红色主题 -->
     <style name="Theme.MeaningOfLife.Red" parent="Theme.MeaningOfLife">
         <item name="colorPrimary">#810100</item>
         <item name="colorPrimaryVariant">#630000</item>
+        <item name="colorSecondary">#810100</item>
+        <item name="colorSecondaryVariant">#630000</item>
     </style>
 
     <!-- 按钮样式 -->

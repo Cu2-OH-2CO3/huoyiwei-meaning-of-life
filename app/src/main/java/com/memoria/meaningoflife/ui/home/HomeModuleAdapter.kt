@@ -1,5 +1,6 @@
 package com.memoria.meaningoflife.ui.home
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,8 +8,8 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.memoria.meaningoflife.R
 import com.memoria.meaningoflife.databinding.ItemHomeModuleBinding
+import com.memoria.meaningoflife.utils.BackgroundManager
 import com.memoria.meaningoflife.utils.CardColorManager
 
 class HomeModuleAdapter(
@@ -51,17 +52,21 @@ class HomeModuleAdapter(
                 binding.badge.visibility = View.GONE
             }
 
-            // 获取卡片颜色（返回的是 Int 类型）
+            // 获取卡片颜色 - 根据模块类型从 CardColorManager 获取
             val color = when (module.id) {
                 "painting" -> CardColorManager.getPaintingCardColorHex(binding.root.context)
                 "diary" -> CardColorManager.getDiaryCardColorHex(binding.root.context)
                 "lunch" -> CardColorManager.getLunchCardColorHex(binding.root.context)
                 "task" -> CardColorManager.getTaskCardColorHex(binding.root.context)
+                "timeline" -> CardColorManager.getTimelineCardColorHex(binding.root.context)
                 else -> CardColorManager.getBackupCardColorHex(binding.root.context)
             }
 
-            // 设置卡片背景色 - color 已经是 Int 类型，可以直接使用
-            (binding.root as? CardView)?.setCardBackgroundColor(color)
+            // 仅调整卡片背景透明度，不影响文字与图标透明度。
+            val alphaPercent = BackgroundManager.getCardAlpha().coerceIn(0, 100)
+            val alpha = (alphaPercent * 255f / 100f).toInt().coerceIn(0, 255)
+            val colorWithAlpha = Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color))
+            (binding.root as CardView).setCardBackgroundColor(colorWithAlpha)
 
             binding.btnDelete.visibility = if (isEditMode) View.VISIBLE else View.GONE
 

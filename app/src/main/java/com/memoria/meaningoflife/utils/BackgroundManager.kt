@@ -15,6 +15,7 @@ object BackgroundManager {
     private const val PREFS_NAME = "background_prefs"
     private const val KEY_BACKGROUND_PATH = "background_path"
     private const val KEY_BACKGROUND_ALPHA = "background_alpha"
+    private const val KEY_CARD_ALPHA = "card_alpha"
     private const val KEY_BACKGROUND_ENABLED = "background_enabled"
 
     private lateinit var prefs: SharedPreferences
@@ -81,6 +82,17 @@ object BackgroundManager {
         prefs.edit().putInt(KEY_BACKGROUND_ALPHA, alpha).apply()
     }
 
+    fun getCardAlpha(): Int {
+        val alpha = prefs.getInt(KEY_CARD_ALPHA, 100)
+        Log.d(TAG, "getCardAlpha: $alpha")
+        return alpha
+    }
+
+    fun setCardAlpha(alpha: Int) {
+        Log.d(TAG, "setCardAlpha: $alpha")
+        prefs.edit().putInt(KEY_CARD_ALPHA, alpha).apply()
+    }
+
     fun isBackgroundEnabled(): Boolean {
         val enabled = prefs.getBoolean(KEY_BACKGROUND_ENABLED, false)
         Log.d(TAG, "isBackgroundEnabled: $enabled")
@@ -89,17 +101,19 @@ object BackgroundManager {
 
     fun clearBackground() {
         Log.d(TAG, "clearBackground")
-        prefs.edit().putBoolean(KEY_BACKGROUND_ENABLED, false).apply()
-        prefs.edit().remove(KEY_BACKGROUND_PATH).apply()
-
-        // 删除图片文件
-        getBackgroundPath()?.let { path ->
+        // 先读取路径并删除文件，再清理背景相关配置。
+        // 注意：故意不重置 KEY_CARD_ALPHA，保留用户的卡片透明度偏好。
+        val oldPath = prefs.getString(KEY_BACKGROUND_PATH, null)
+        oldPath?.let { path ->
             val file = File(path)
             if (file.exists()) {
                 val deleted = file.delete()
                 Log.d(TAG, "clearBackground: Deleted file: $deleted")
             }
         }
+
+        prefs.edit().putBoolean(KEY_BACKGROUND_ENABLED, false).apply()
+        prefs.edit().remove(KEY_BACKGROUND_PATH).apply()
     }
 
     fun getBackgroundBitmap(context: Context): Bitmap? {

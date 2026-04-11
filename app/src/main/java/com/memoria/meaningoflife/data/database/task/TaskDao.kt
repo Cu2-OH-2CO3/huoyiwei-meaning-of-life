@@ -28,8 +28,8 @@ interface TaskDao {
     fun getTaskById(taskId: Long): TaskEntity?
 
     @Query("SELECT * FROM tasks WHERE isDeleted = 0 AND completedAt IS NULL AND deadline IS NOT NULL " +
-            "AND deadline <= :threeDaysLater AND isUrgent = 0")
-    fun getTasksNeedingUrgentFlag(threeDaysLater: Long): List<TaskEntity>
+            "AND deadline BETWEEN :currentTime AND :threeDaysLater AND isUrgent = 0")
+    fun getTasksNeedingUrgentFlag(currentTime: Long, threeDaysLater: Long): List<TaskEntity>
 
     @Query("SELECT * FROM tasks WHERE isDeleted = 0 AND completedAt IS NULL " +
             "AND deadline IS NOT NULL AND deadline <= :endOfDay " +

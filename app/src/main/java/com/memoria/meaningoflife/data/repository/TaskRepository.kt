@@ -53,8 +53,9 @@ class TaskRepository(private val database: AppDatabase) {
     }
 
     suspend fun markTasksAsUrgent() = withContext(Dispatchers.IO) {
-        val threeDaysLater = System.currentTimeMillis() + 3 * 24 * 60 * 60 * 1000L
-        val tasks = database.taskDao().getTasksNeedingUrgentFlag(threeDaysLater)
+        val currentTime = System.currentTimeMillis()
+        val threeDaysLater = currentTime + 3 * 24 * 60 * 60 * 1000L
+        val tasks = database.taskDao().getTasksNeedingUrgentFlag(currentTime, threeDaysLater)
         tasks.forEach { task ->
             if (!task.isUrgent) {
                 database.taskDao().markAsUrgent(task.id)
@@ -81,9 +82,8 @@ class TaskRepository(private val database: AppDatabase) {
         database.taskNodeDao().completeNode(nodeId, System.currentTimeMillis())
     }
 
-    // 在 TaskRepository.kt 中添加
-    fun getUrgentImportantCountSync(): Int {
-        return database.taskDao().getUrgentImportantCountSync()
+    suspend fun getUrgentImportantCountSync(): Int = withContext(Dispatchers.IO) {
+        database.taskDao().getUrgentImportantCountSync()
     }
 
 

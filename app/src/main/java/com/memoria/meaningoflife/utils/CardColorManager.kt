@@ -16,13 +16,15 @@ object CardColorManager {
     private const val KEY_CUSTOM_PRESETS = "custom_presets"
     private const val KEY_CURRENT_PRESET = "current_preset"
 
+    private const val KEY_TIMELINE_COLOR = "timeline_card_color"
+
     // 默认预设（5个颜色：绘画、日记、午餐、待办、备份）
     private val DEFAULT_PRESETS: Map<String, List<String>> = mapOf(
-        "本色" to listOf("#5D7A5C", "#9B8E7C", "#FF8C42", "#9C27B0", "#FF8C42"),
-        "藍二乗" to listOf("#78C7D2", "#78D1E5", "#88C6ED", "#89ABE3", "#446CCF"),
-        "花綠青" to listOf("#A5D1B5", "#6BB392", "#53976F", "#1C8D6C", "#007D62"),
-        "烏の歌に茜" to listOf("#FEA837", "#DE741C", "#B85B56", "#84495F", "#593E67"),
-        "無我夢中" to listOf("#C0C4C3", "#810100", "#1B1717", "#630000", "#BE0208")
+        "本色" to listOf("#5D7A5C", "#9B8E7C", "#FF8C42", "#9C27B0", "#FF8C42", "#FF8C42"),
+        "藍二乗" to listOf("#78C7D2", "#78D1E5", "#88C6ED", "#89ABE3", "#446CCF", "#446CCF"),
+        "花綠青" to listOf("#A5D1B5", "#6BB392", "#53976F", "#1C8D6C", "#007D62", "#007D62"),
+        "烏の歌に茜" to listOf("#FEA837", "#DE741C", "#B85B56", "#84495F", "#593E67", "#593E67"),
+        "無我夢中" to listOf("#C0C4C3", "#810100", "#1B1717", "#630000", "#BE0208", "#BE0208")
 
     )
 
@@ -55,6 +57,13 @@ object CardColorManager {
         prefs.edit().putString(KEY_BACKUP, colorStr).apply()
     }
 
+    fun setTimelineCardColor(context: Context, colorStr: String) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putString(KEY_TIMELINE_COLOR, colorStr).apply()
+    }
+
+
+
     // ==================== 获取卡片颜色（返回十六进制字符串） ====================
 
     // 这些方法应该返回 Int（颜色值），而不是 String
@@ -85,6 +94,12 @@ object CardColorManager {
     fun getBackupCardColorHex(context: Context): Int {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val colorStr = prefs.getString(KEY_BACKUP, "#FF8C42") ?: "#FF8C42"
+        return android.graphics.Color.parseColor(colorStr)
+    }
+
+    fun getTimelineCardColorHex(context: Context): Int {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val colorStr = prefs.getString(KEY_BACKUP, "#7C3AED") ?: "#7C3AED"
         return android.graphics.Color.parseColor(colorStr)
     }
 

@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="数据管理"
+            android:text="@string/settings_section_data_management"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="8dp" />
@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="📦 备份数据"
+                    android:text="@string/settings_backup_data"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
@@ -53,7 +53,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="📂 恢复数据"
+                    android:text="@string/settings_restore_data"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
@@ -68,7 +68,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="📂 存储位置"
+                    android:text="@string/settings_storage_location"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
@@ -83,10 +83,94 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="🗑️ 清除缓存"
+                    android:text="@string/settings_clear_cache"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- 自动备份开关 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_backup"
+                        android:contentDescription="@string/settings_backup_icon_desc"
+                        app:tint="?attr/colorPrimary" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/settings_auto_backup"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/settings_auto_backup_desc"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/darker_gray" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switch_auto_backup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <!-- 备份信息（可点击查看详情） -->
+                <LinearLayout
+                    android:id="@+id/layout_backup_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:padding="8dp"
+                    android:background="@drawable/bg_backup_info"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tv_backup_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_no_quick_backup"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:gravity="center" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -96,7 +180,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="界面外观"
+            android:text="@string/settings_section_appearance"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="8dp" />
@@ -126,11 +210,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="🌙 深色模式"
+                        android:text="@string/settings_dark_mode"
                         android:textSize="16sp"
                         android:textColor="@color/text_primary" />
 
-                    <Switch
+                    <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchDarkMode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -154,7 +238,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="🎨 主题颜色"
+                        android:text="@string/settings_theme_color"
                         android:textSize="16sp"
                         android:textColor="@color/text_primary" />
 
@@ -178,7 +262,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="🎨 卡片颜色"
+                    android:text="@string/settings_card_colors"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
@@ -194,7 +278,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="🖼️ 首页背景"
+                    android:text="@string/settings_home_background"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
@@ -207,7 +291,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="每日一言"
+            android:text="@string/settings_section_daily_quote"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="8dp" />
@@ -241,7 +325,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="+ 添加一言"
+                    android:text="@string/settings_add_quote"
                     android:textSize="14sp"
                     android:textColor="?attr/colorPrimary"
                     android:background="?selectableItemBackground"
@@ -255,7 +339,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="关于"
+            android:text="@string/settings_section_about"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:layout_marginBottom="8dp" />
@@ -284,7 +368,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="版本号"
+                        android:text="@string/settings_version"
                         android:textSize="16sp"
                         android:textColor="@color/text_primary" />
 
@@ -292,7 +376,7 @@
                         android:id="@+id/tvVersion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1.0.0"
+                        android:text="@string/settings_version"
                         android:textSize="14sp"
                         android:textColor="@color/text_secondary" />
 
@@ -308,7 +392,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="📋 查看日志"
+                    android:text="@string/settings_view_logs"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
@@ -323,7 +407,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="📄 隐私政策"
+                    android:text="@string/settings_privacy_policy"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
@@ -338,7 +422,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="💡 功能介绍"
+                    android:text="@string/settings_feature_intro"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"
                     android:background="?selectableItemBackground" />
@@ -350,7 +434,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🎨 活意味\n记录创作，品味生活"
+            android:text="@string/settings_app_slogan"
             android:textSize="12sp"
             android:textColor="@color/text_secondary"
             android:gravity="center"

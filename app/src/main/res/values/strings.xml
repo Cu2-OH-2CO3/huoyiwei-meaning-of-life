@@ -1,87 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">活意味</string>
-    <string name="app_subtitle">记录创作，品味生活</string>
 
-    <!-- Bottom Navigation -->
+    <!-- 底部导航栏 -->
     <string name="nav_home">首页</string>
     <string name="nav_calendar">日历</string>
     <string name="nav_settings">设置</string>
+    <string name="nav_timeline">时间轴</string>
 
-    <!-- Home -->
-    <string name="home_painting">绘画记录</string>
-    <string name="home_diary">日记本</string>
-    <string name="home_lunch">午餐抽选</string>
-    <string name="home_enter">进入</string>
-    <string name="home_today_duration">今日练习</string>
-    <string name="home_month_work">本月作品</string>
-    <string name="home_current_goal">当前目标</string>
-    <string name="home_consecutive_days">连续写日记</string>
-    <string name="home_month_diary">本月日记</string>
-    <string name="home_today_mood">今日心情</string>
-    <string name="home_today_recommend">今日推荐</string>
-    <string name="home_total_dishes">菜单数量</string>
-
-    <!-- Painting -->
-    <string name="painting_title">绘画记录</string>
-    <string name="painting_add_work">添加作品</string>
-    <string name="painting_work_list">作品列表</string>
-    <string name="painting_goal_manage">目标管理</string>
-    <string name="painting_total_duration">总时长</string>
-    <string name="painting_nodes">节点</string>
-    <string name="painting_add_node">添加节点</string>
-    <string name="painting_node_duration">节点时长</string>
-    <string name="painting_node_note">节点留言</string>
-    <string name="painting_tag_sketch">草稿</string>
-    <string name="painting_tag_practice">练习</string>
-    <string name="painting_tag_finished">成图</string>
-
-    <!-- Diary -->
-    <string name="diary_title">日记本</string>
-    <string name="diary_write">写日记</string>
-    <string name="diary_calendar">日历</string>
-    <string name="diary_mood">心情</string>
-    <string name="diary_weather">天气</string>
-    <string name="diary_tags">标签</string>
-    <string name="diary_add_image">添加图片</string>
-    <string name="diary_save">保存</string>
-
-    <!-- Lunch -->
-    <string name="lunch_title">午餐抽选</string>
+    <!-- 午餐模块 -->
     <string name="lunch_start">开始抽选</string>
     <string name="lunch_edit_menu">编辑菜单</string>
-    <string name="lunch_history">历史记录</string>
-    <string name="lunch_dish_name">菜名</string>
-    <string name="lunch_cuisine">菜系</string>
-    <string name="lunch_spicy">辣度</string>
+    <string name="lunch_history">抽选历史</string>
     <string name="lunch_no_spicy">不辣</string>
     <string name="lunch_mild_spicy">微辣</string>
     <string name="lunch_medium_spicy">中辣</string>
     <string name="lunch_hot_spicy">特辣</string>
+    <string name="empty_data">暂无数据</string>
 
-    <!-- Settings -->
-    <string name="settings_title">设置</string>
-    <string name="settings_data_manage">数据管理</string>
-    <string name="settings_backup">备份数据</string>
-    <string name="settings_storage">存储位置</string>
-    <string name="settings_clear_cache">清除缓存</string>
-    <string name="settings_preferences">偏好设置</string>
-    <string name="settings_dark_mode">深色模式</string>
-    <string name="settings_daily_reminder">每日签到提醒</string>
-    <string name="settings_lunch_reminder_time">午餐推荐时间</string>
-    <string name="settings_about">关于</string>
-    <string name="settings_version">版本号</string>
-    <string name="settings_privacy">隐私政策</string>
-    <string name="settings_intro">功能介绍</string>
-
-    <!-- Common -->
-    <string name="confirm">确认</string>
+    <!-- 通用 -->
+    <string name="save">保存</string>
     <string name="cancel">取消</string>
     <string name="delete">删除</string>
+    <string name="close">关闭</string>
     <string name="edit">编辑</string>
-    <string name="save">保存</string>
-    <string name="back">返回</string>
-    <string name="loading">加载中...</string>
-    <string name="empty_data">暂无数据</string>
-    <string name="error">出错了</string>
-    <string name="success">成功</string>
+    <string name="add">添加</string>
+    <string name="confirm">确认</string>
+
+    <!-- 学期管理 -->
+    <string name="add_semester">添加学期</string>
+    <string name="semester_management">学期管理</string>
+    <string name="current">当前</string>
+    <string name="start_date">开始日期</string>
+    <string name="end_date">结束日期</string>
+    <string name="total_weeks">总周数</string>
+    <string name="weeks">周</string>
+    <string name="current_semester">【当前学期】</string>
+    <string name="set_as_current">设为当前</string>
+    <string name="enter_semester_name">请输入学期名称</string>
+    <string name="add_success">添加成功</string>
+    <string name="set_as_current_success">已设为当前学期</string>
+    <string name="delete_semester">删除学期</string>
+    <string name="confirm_delete_semester">确定要删除「%s」吗？</string>
+    <string name="deleted">已删除</string>
+
+    <!-- 课程管理 -->
+    <string name="course_management">课程管理</string>
+    <string name="add_course">添加课程</string>
+    <string name="course_name">课程名称</string>
+    <string name="teacher">教师</string>
+    <string name="location">地点</string>
+    <string name="time">时间</string>
+    <string name="week_info">周次信息</string>
+    <string name="remark">备注</string>
+    <string name="course_detail">课程详情</string>
+    <string name="confirm_delete_course">确定要删除「%s」吗？</string>
+
+    <!-- 待办任务 -->
+    <string name="task_management">待办任务</string>
+    <string name="add_task">添加任务</string>
+    <string name="task_title">任务标题</string>
+    <string name="task_description">任务描述</string>
+    <string name="deadline">截止日期</string>
+    <string name="priority">优先级</string>
+    <string name="urgent">紧急</string>
+    <string name="important">重要</string>
+    <string name="confirm_delete_task">确定要删除「%s」吗？</string>
+
+    <!-- 时间轴 -->
+    <string name="timeline">时间轴</string>
+    <string name="schedule_mode">课表模式</string>
+    <string name="free_mode">里模式</string>
+    <string name="import_ics">导入课表</string>
+    <string name="export_schedule">导出课表</string>
+    <string name="schedule_show_non_course_events">显示非课程事件</string>
+    <string name="schedule_non_course_event_hint">开启后，导入的考试/活动等将显示在课表中</string>
+    <string name="schedule_prev_week">上一周</string>
+    <string name="schedule_next_week">下一周</string>
+    <string name="schedule_week_default">第 1 周 / 共 16 周</string>
+    <string name="schedule_add_course_desc">添加课程</string>
+    <string name="schedule_import_ics_desc">导入 ICS</string>
+    <string name="no_events">暂无事件</string>
+    <string name="click_to_add">点击右下角 + 添加</string>
+
+    <!-- ICS 导入 -->
+    <string name="select_ics_file">选择 ICS 文件</string>
+    <string name="parsing_success">解析成功</string>
+    <string name="parsing_failed">解析失败</string>
+    <string name="import_success">导入成功</string>
+    <string name="import_failed">导入失败</string>
+    <string name="courses_found">发现 %d 门课程</string>
+    <string name="events_found">发现 %d 个事件</string>
+
+    <!-- 错误提示 -->
+    <string name="error_occurred">发生错误</string>
+    <string name="network_error">网络错误</string>
+    <string name="please_try_again">请重试</string>
+    <string name="no_data">暂无数据</string>
+
+    <!-- 标题 -->
+    <string name="diary_title">日记本</string>
+    <string name="lunch_title">午餐抽选</string>
+    <string name="painting_title">绘画记录</string>
+
+    <!-- 设置页 -->
+    <string name="settings_section_data_management">数据管理</string>
+    <string name="settings_backup_data">📦 备份数据</string>
+    <string name="settings_restore_data">📂 恢复数据</string>
+    <string name="settings_storage_location">📂 存储位置</string>
+    <string name="settings_clear_cache">🗑️ 清除缓存</string>
+    <string name="settings_auto_backup">自动备份</string>
+    <string name="settings_auto_backup_desc">每次启动应用时自动生成快速备份</string>
+    <string name="settings_no_quick_backup">暂无快速备份</string>
+    <string name="settings_backup_icon_desc">自动备份图标</string>
+    <string name="settings_section_appearance">界面外观</string>
+    <string name="settings_dark_mode">🌙 深色模式</string>
+    <string name="settings_theme_color">🎨 主题颜色</string>
+    <string name="settings_card_colors">🎨 卡片颜色</string>
+    <string name="settings_home_background">🖼️ 首页背景</string>
+    <string name="settings_section_daily_quote">每日一言</string>
+    <string name="settings_add_quote">+ 添加一言</string>
+    <string name="settings_section_about">关于</string>
+    <string name="settings_version">版本号</string>
+    <string name="settings_version_text">版本号 %1$s</string>
+    <string name="settings_view_logs">📋 查看日志</string>
+    <string name="settings_privacy_policy">📄 隐私政策</string>
+    <string name="settings_feature_intro">💡 功能介绍</string>
+    <string name="settings_app_slogan">🎨 活意味\n记录创作，品味生活</string>
 </resources>

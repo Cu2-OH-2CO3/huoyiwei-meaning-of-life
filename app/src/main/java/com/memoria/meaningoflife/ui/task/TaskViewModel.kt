@@ -11,6 +11,7 @@ import com.memoria.meaningoflife.data.repository.DiaryRepository
 import com.memoria.meaningoflife.data.repository.TaskRepository
 import com.memoria.meaningoflife.utils.DateUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -28,7 +29,9 @@ class TaskViewModel : ViewModel() {
 
     private fun loadTasks() {
         viewModelScope.launch {
-            repository.getAllTasks().collect { tasks ->
+            // 页面加载时先同步一次紧急标记，保证前三天规则立即生效
+            repository.markTasksAsUrgent()
+            repository.getAllTasks().collectLatest { tasks ->
                 _allTasks.postValue(tasks)
             }
         }
@@ -46,14 +49,14 @@ class TaskViewModel : ViewModel() {
     fun insertTask(task: TaskEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertTask(task)
-            loadTasks()
+            repository.markTasksAsUrgent()
         }
     }
 
     fun updateTask(task: TaskEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.updateTask(task)
-            loadTasks()
+            repository.markTasksAsUrgent()
         }
     }
 
@@ -94,14 +97,14 @@ class TaskViewModel : ViewModel() {
                 diaryRepository.insertDiary(diary)
             }
 
-            loadTasks()
+            repository.markTasksAsUrgent()
         }
     }
 
     fun deleteTask(task: TaskEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.softDeleteTask(task.id)
-            loadTasks()
+            repository.markTasksAsUrgent()
         }
     }
 }
